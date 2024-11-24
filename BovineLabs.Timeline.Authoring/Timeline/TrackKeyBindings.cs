@@ -7,7 +7,6 @@ namespace BovineLabs.Timeline.Authoring
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using UnityEngine.Playables;
     using UnityEngine.Timeline;
     using Object = UnityEngine.Object;
 
@@ -15,7 +14,7 @@ namespace BovineLabs.Timeline.Authoring
     [Serializable]
     public struct TrackKeyBindings
     {
-        /// <summary>Track->Tag pairs</summary>
+        /// <summary> Track->Tag pairs </summary>
         [Serializable]
         public struct TrackKeyPair
         {
@@ -23,10 +22,10 @@ namespace BovineLabs.Timeline.Authoring
             public Object Target;
         }
 
-        /// <summary>The list of bindings. </summary>
+        /// <summary> The list of bindings. </summary>
         public List<TrackKeyPair> Bindings;
 
-        /// <summary>Sync the track list to the given Timeline</summary>
+        /// <summary> Sync the track list to the given Timeline </summary>
         public void SyncToTimeline(TimelineAsset timeline)
         {
             this.Bindings ??= new List<TrackKeyPair>();
@@ -49,11 +48,11 @@ namespace BovineLabs.Timeline.Authoring
 
                 if (list.FindIndex(x => x.Track == track) == -1)
                 {
-                    list.Add(new TrackKeyPair { Track = track } );
+                    list.Add(new TrackKeyPair { Track = track });
                 }
             }
 
-            for (int i = list.Count-1; i >= 0; i--)
+            for (var i = list.Count - 1; i >= 0; i--)
             {
                 if (list[i].Track == null || outputs.FindIndex(o => o.sourceObject == list[i].Track) == -1)
                 {
@@ -62,7 +61,7 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
-        /// <summary>Given a track, find the corresponding tag. </summary>
+        /// <summary> Given a track, find the corresponding tag. </summary>
         public Object? FindObject(TrackAsset? asset)
         {
             if (asset == null || this.Bindings == null)
@@ -70,7 +69,7 @@ namespace BovineLabs.Timeline.Authoring
                 return null;
             }
 
-            int index = this.Bindings.FindIndex(x => x.Track == asset);
+            var index = this.Bindings.FindIndex(x => x.Track == asset);
             return index >= 0 ? this.Bindings[index].Target : null;
         }
     }

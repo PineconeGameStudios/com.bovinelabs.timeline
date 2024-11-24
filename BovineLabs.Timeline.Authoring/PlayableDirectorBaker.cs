@@ -16,7 +16,7 @@ namespace BovineLabs.Timeline.Authoring
 
     public class PlayableDirectorBaker : Baker<PlayableDirector>
     {
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public override void Bake(PlayableDirector director)
         {
             if (director.playableAsset is not TimelineAsset)
@@ -25,7 +25,12 @@ namespace BovineLabs.Timeline.Authoring
             }
 
             var entity = this.GetEntity(TransformUsageFlags.None);
-            this.AddComponent(entity, new Timer { Time = new DiscreteTime(director.initialTime), TimeScale = 1 }); // TODO initial time isn't actually used
+            this.AddComponent(entity, new Timer
+            {
+                Time = new DiscreteTime(director.initialTime),
+                TimeScale = 1,
+            }); // TODO initial time isn't actually used
+
             this.AddComponent<TimerPaused>(entity);
             this.SetComponentEnabled<TimerPaused>(entity, false);
 
@@ -52,6 +57,7 @@ namespace BovineLabs.Timeline.Authoring
                         DeltaTime = DiscreteTime.Zero,
                         TimeScale = 1,
                     });
+
                     break;
             }
 

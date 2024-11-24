@@ -13,7 +13,7 @@ namespace BovineLabs.Timeline.Data.Schedular
     [WriteGroup(typeof(ClockData))]
     public struct ClockTypeConstant : IComponentData
     {
-        /// <summary>The delta time to advance each frame. </summary>
+        /// <summary> The delta time to advance each frame. </summary>
         public DiscreteTime DeltaTime;
 
         ///<summary> The timescale to pass to the timer. </summary>

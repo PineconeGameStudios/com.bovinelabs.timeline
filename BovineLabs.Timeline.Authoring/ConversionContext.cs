@@ -18,28 +18,28 @@ namespace BovineLabs.Timeline.Authoring
     /// <summary> Relevant information about the current timeline conversion. </summary>
     public struct BakingContext
     {
-        /// <summary>The Conversion System</summary>
+        /// <summary> The Conversion System </summary>
         public readonly IBaker Baker;
 
-        /// <summary>The current timer entity for this conversion</summary>
+        /// <summary> The current timer entity for this conversion </summary>
         public Entity Timer;
 
-        /// <summary>The target object being converted. This is the top most gameObject with a PlayableDirector component.</summary>
+        /// <summary> The target object being converted. This is the top most gameObject with a PlayableDirector component. </summary>
         public Entity Target;
 
-        /// <summary>The current playable director being converted. For the top most director, this is the PlayableDirector.</summary>
+        /// <summary> The current playable director being converted. For the top most director, this is the PlayableDirector. </summary>
         public PlayableDirector? Director;
 
-        /// <summary>The current track being converted</summary>
+        /// <summary> The current track being converted </summary>
         public TrackAsset? Track;
 
-        /// <summary>The current clip being converted</summary>
+        /// <summary> The current clip being converted </summary>
         public TimelineClip? Clip;
 
-        /// <summary>The current identified for the binding</summary>
+        /// <summary> The current identified for the binding </summary>
         public Binding? Binding;
 
-        /// <summary>Values that should be maintained across context copies</summary>
+        /// <summary> Values that should be maintained across context copies </summary>
         public SharedContextValues SharedContextValues;
 
         public BakingContext(IBaker baker, Entity timer, Entity target, PlayableDirector director)
@@ -71,10 +71,10 @@ namespace BovineLabs.Timeline.Authoring
     /// <summary> Managed object to track values that should be maintained across conversion context copies. </summary>
     public class SharedContextValues
     {
-        /// <summary>The current track priorities</summary>
+        /// <summary> The current track priorities </summary>
         public int TrackPriority;
 
-        /// <summary>The current list of clip entities to compile</summary>
+        /// <summary> The current list of clip entities to compile </summary>
         public List<(Entity ClipEntity, TimelineClip Clip)> ClipEntities = new();
         public readonly Dictionary<Entity, CompositeTimer> CompositeTimers = new();
         public readonly List<Entity> TimeDataEntities = new();
@@ -90,10 +90,10 @@ namespace BovineLabs.Timeline.Authoring
         /// <summary>
         /// Create an Entity, binding it to the target conversion object
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentException"></exception>
+        /// <param name="context"> </param>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
+        /// <exception cref="System.ArgumentException"> </exception>
         public static Entity CreateEntity(this BakingContext context, string? name = null)
         {
             return context.Baker.CreateAdditionalEntity(TransformUsageFlags.None, false, name);
@@ -102,9 +102,9 @@ namespace BovineLabs.Timeline.Authoring
         /// <summary>
         /// Create a composite timer entity using the context TimelineClip values. This requires the context to contain an existing Timer (which can be composite)
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns>A new entity containing a timer</returns>
-        /// <exception cref="System.ArgumentException">Thrown if no TimelineClip is supplied</exception>
+        /// <param name="context"> </param>
+        /// <returns> A new entity containing a timer </returns>
+        /// <exception cref="System.ArgumentException"> Thrown if no TimelineClip is supplied </exception>
         public static BakingContext CreateCompositeTimer(this BakingContext context)
         {
             if (context.Clip == null)
@@ -112,28 +112,24 @@ namespace BovineLabs.Timeline.Authoring
                 throw new ArgumentException("CreateCompositeTimer requires a TimelineClip to create a CompositeTimer");
             }
 
-            return CreateCompositeTimer(
-                context,
-                new ActiveRange
+            return CreateCompositeTimer(context, new ActiveRange
                 {
                     Start = new DiscreteTime(context.Clip.extrapolatedStart),
                     End = new DiscreteTime(context.Clip.extrapolatedStart) + new DiscreteTime(context.Clip.extrapolatedDuration),
-                },
-                new DiscreteTime(context.Clip.clipIn) + (new DiscreteTime(-context.Clip.start) * context.Clip.timeScale),
-                context.Clip.timeScale,
+                }, new DiscreteTime(context.Clip.clipIn) + (new DiscreteTime(-context.Clip.start) * context.Clip.timeScale), context.Clip.timeScale,
                 context.Clip.displayName + " (Composite Timer)");
         }
 
         /// <summary>
         /// Create a composite timer using preset values
         /// </summary>
-        /// <param name="context">The current ConversionContext</param>
-        /// <param name="range">The range, relative to the parent timer, that this timer is active.</param>
-        /// <param name="offset">The time offset of this timer relative to the parent timer.</param>
-        /// <param name="scale">The scale offset of this timer relative to the parent timer.</param>
-        /// <param name="name">The name of the entity.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException">Thrown if the conversion context does not contain the required values for creating a composite timer</exception>
+        /// <param name="context"> The current ConversionContext </param>
+        /// <param name="range"> The range, relative to the parent timer, that this timer is active. </param>
+        /// <param name="offset"> The time offset of this timer relative to the parent timer. </param>
+        /// <param name="scale"> The scale offset of this timer relative to the parent timer. </param>
+        /// <param name="name"> The name of the entity. </param>
+        /// <returns> </returns>
+        /// <exception cref="ArgumentException"> Thrown if the conversion context does not contain the required values for creating a composite timer </exception>
         public static BakingContext CreateCompositeTimer(this BakingContext context, ActiveRange range, DiscreteTime offset, double scale, string name)
         {
             if (context.Timer == default)
@@ -216,10 +212,10 @@ namespace BovineLabs.Timeline.Authoring
                 throw new ArgumentException("context.Clip cannot be null");
             }
 
-            string name = $"{context.Clip.displayName} (ClipEntity)";
+            var name = $"{context.Clip.displayName} (ClipEntity)";
 
             var entity = CreateEntity(context, name);
-            ClipBaker.AddClipBaseComponents(context, entity,  context.Clip);
+            ClipBaker.AddClipBaseComponents(context, entity, context.Clip);
             ClipBaker.AddExtrapolationComponents(context, entity, context.Clip);
             ClipBaker.AddMixCurvesComponents(context, entity, context.Clip);
 
@@ -234,7 +230,7 @@ namespace BovineLabs.Timeline.Authoring
 
         public static Binding GetBinding(this BakingContext context, DOTSTrack track, Object? trackBinding)
         {
-            Entity entity = Entity.Null;
+            var entity = Entity.Null;
 
             if (trackBinding != null)
             {

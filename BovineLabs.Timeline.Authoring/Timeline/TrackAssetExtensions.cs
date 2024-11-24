@@ -12,7 +12,7 @@ namespace BovineLabs.Timeline.Authoring
     /// </summary>
     public static class TrackAssetExtensions
     {
-        /// <summary>Get clips from all layers of a track, excluding any on muted tracks</summary>
+        /// <summary> Get clips from all layers of a track, excluding any on muted tracks </summary>
         public static IEnumerable<TimelineClip> GetActiveClipsFromAllLayers(this TrackAsset asset)
         {
             if (asset.muted)

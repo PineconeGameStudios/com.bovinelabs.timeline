@@ -4,12 +4,8 @@
 
 namespace BovineLabs.Timeline.Authoring
 {
-    using System;
-    using BovineLabs.Core.PropertyDrawers;
     using BovineLabs.Timeline.Data.Schedular;
     using Unity.Entities;
-    using UnityEditor;
-    using UnityEngine;
     using UnityEngine.Playables;
     using UnityEngine.Timeline;
 

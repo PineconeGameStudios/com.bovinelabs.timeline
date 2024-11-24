@@ -10,7 +10,7 @@ namespace BovineLabs.Timeline.Authoring
 
     /// <summary>
     /// SubTimelineClip - is a clip that can build DOTS compatible tracks from a timeline asset.
-    ///   The clip itself stores the tags
+    /// The clip itself stores the tags
     /// </summary>
     [Serializable]
     public class SubTimelineClip : DOTSClip, ITimelineClipAsset
@@ -20,11 +20,11 @@ namespace BovineLabs.Timeline.Authoring
 
         public ClipCaps clipCaps => ClipCaps.ClipIn | ClipCaps.SpeedMultiplier;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public override double duration => this.Timeline != null ? this.Timeline.duration : base.duration;
 
-        /// <inheritdoc/>
-        /// <remarks>Converts the sub director timeline. </remarks>
+        /// <inheritdoc />
+        /// <remarks> Converts the sub director timeline. </remarks>
         public override void Bake(Entity clipEntity, BakingContext context)
         {
             if (this.Timeline != null)

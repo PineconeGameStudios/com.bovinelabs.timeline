@@ -41,8 +41,8 @@ namespace BovineLabs.Timeline.Authoring
         /// <summary>
         /// Gets a single animation curve that represents the weighting curve of the entire clip
         /// </summary>
-        /// <param name="clip"></param>
-        /// <returns>null if the TimelineClip does not have any blend or ease weights</returns>
+        /// <param name="clip"> </param>
+        /// <returns> null if the TimelineClip does not have any blend or ease weights </returns>
         public static AnimationCurve? CreateClipWeightCurve(this TimelineClip? clip)
         {
             if (clip == null)
@@ -59,14 +59,12 @@ namespace BovineLabs.Timeline.Authoring
             var keys = new List<Keyframe>(10);
             if (clip.mixInDuration >= float.Epsilon)
             {
-                float2 range = new float2(
-                    (float)clip.clipIn, (float)clip.ToLocalTime(clip.mixInDuration + clip.start)
-                );
+                var range = new float2((float)clip.clipIn, (float)clip.ToLocalTime(clip.mixInDuration + clip.start));
                 var curve = clip.mixInCurve;
 
                 // remap keys to local time
                 var mixInKeys = curve.keys;
-                for (int i = 0; i < mixInKeys.Length; i++)
+                for (var i = 0; i < mixInKeys.Length; i++)
                 {
                     mixInKeys[i].time = (mixInKeys[i].time * (range.y - range.x)) + range.x;
                 }
@@ -81,7 +79,7 @@ namespace BovineLabs.Timeline.Authoring
 
                 // remap keys to local time
                 var mixOutKeys = curve.keys;
-                for (int i = 0; i < mixOutKeys.Length; i++)
+                for (var i = 0; i < mixOutKeys.Length; i++)
                 {
                     mixOutKeys[i].time = (mixOutKeys[i].time * (range.y - range.x)) + range.x;
                 }
@@ -100,9 +98,9 @@ namespace BovineLabs.Timeline.Authoring
         /// <summary>
         /// Checks if a timeline clip is within range, including loops of the timeline asset.
         /// </summary>
-        /// <param name="clip">The TimelineClip including Loops</param>
-        /// <param name="activeRange">The active range to check. If this is larger than the timelines range, it is checked for loops</param>
-        /// <returns></returns>
+        /// <param name="clip"> The TimelineClip including Loops </param>
+        /// <param name="activeRange"> The active range to check. If this is larger than the timelines range, it is checked for loops </param>
+        /// <returns> </returns>
         public static bool InRangeInclLoops(this TimelineClip clip, ActiveRange activeRange)
         {
             var clipRange = clip.GetActiveRange();
@@ -120,9 +118,9 @@ namespace BovineLabs.Timeline.Authoring
         /// <summary>
         /// Checks if a timeline clip is within range, including loops of the timeline asset.
         /// </summary>
-        /// <param name="clipRange">The range of the TimelineClip including Loops</param>
-        /// <param name="activeRange">The active range to check. If this is larger than the timelines range, it is checked for loops</param>
-        /// <returns></returns>
+        /// <param name="clipRange"> The range of the TimelineClip including Loops </param>
+        /// <param name="activeRange"> The active range to check. If this is larger than the timelines range, it is checked for loops </param>
+        /// <returns> </returns>
         public static bool InRangeInclLoops(ActiveRange clipRange, ActiveRange activeRange, ActiveRange timelineRange)
         {
             if (!activeRange.IsValid())
@@ -163,7 +161,7 @@ namespace BovineLabs.Timeline.Authoring
             return endRange.Overlaps(clipRange) || startRange.Overlaps(clipRange);
         }
 
-        /// <summary>Returns the active range of the subtimeline of this clip</summary>
+        /// <summary> Returns the active range of the subtimeline of this clip </summary>
         public static ActiveRange GetSubTimelineRange(this TimelineClip clip)
         {
             return new ActiveRange

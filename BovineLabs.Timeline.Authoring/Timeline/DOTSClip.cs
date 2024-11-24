@@ -10,25 +10,25 @@ namespace BovineLabs.Timeline.Authoring
 
     public abstract class DOTSClip : PlayableAsset
     {
-         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
-         {
-             return Playable.Create(graph);
-         }
+        public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
+        {
+            return Playable.Create(graph);
+        }
 
-         /// <summary>
-         /// Creates an entity from this clip, using the context object provided. Override this method to change the default
-         /// clip create method, or return Entity.Null where a conversion is not required.
-         /// </summary>
+        /// <summary>
+        /// Creates an entity from this clip, using the context object provided. Override this method to change the default
+        /// clip create method, or return Entity.Null where a conversion is not required.
+        /// </summary>
         /// <param name="context"> The current context. </param>
         /// <returns> The clip entity or Entity.Null when baking not required. </returns>
-         public virtual Entity CreateClipEntity(BakingContext context)
-         {
-             return context.CreateClipEntity();
-         }
+        public virtual Entity CreateClipEntity(BakingContext context)
+        {
+            return context.CreateClipEntity();
+        }
 
-         /// <summary> Override this method to add addition components to the clipEntity provided. </summary>
-         public virtual void Bake(Entity clipEntity, BakingContext context)
-         {
-         }
+        /// <summary> Override this method to add addition components to the clipEntity provided. </summary>
+        public virtual void Bake(Entity clipEntity, BakingContext context)
+        {
+        }
     }
 }

@@ -13,10 +13,7 @@ namespace BovineLabs.Timeline
     public static class JobHelpers
     {
         public static void AnimateUnblendExecuteGeneric<T, TB, TC>(
-            in TrackBinding binding,
-            in LocalTime localTime,
-            ref TC animatedComponent,
-            NativeParallelHashMap<Entity, MixData<T>>.ParallelWriter blendData)
+            in TrackBinding binding, in LocalTime localTime, ref TC animatedComponent, NativeParallelHashMap<Entity, MixData<T>>.ParallelWriter blendData)
             where T : unmanaged
             where TB : unmanaged, IBlobCurveSampler<T>
             where TC : unmanaged, IAnimatedComponent<T, TB>
@@ -42,11 +39,7 @@ namespace BovineLabs.Timeline
         }
 
         public static void AccumulateWeightedAnimationExecuteGeneric<T, TB, TC>(
-            in TrackBinding binding,
-            in LocalTime localTime,
-            ref TC animatedComponent,
-            in ClipWeight c3,
-            NativeParallelHashMap<Entity, MixData<T>> blendData)
+            in TrackBinding binding, in LocalTime localTime, ref TC animatedComponent, in ClipWeight c3, NativeParallelHashMap<Entity, MixData<T>> blendData)
             where T : unmanaged
             where TB : unmanaged, IBlobCurveSampler<T>
             where TC : unmanaged, IAnimatedComponent<T, TB>
@@ -56,7 +49,7 @@ namespace BovineLabs.Timeline
                 return;
             }
 
-            T v = animatedComponent.DefaultValue;
+            var v = animatedComponent.DefaultValue;
 
             if (animatedComponent.AnimationData.IsCreated)
             {

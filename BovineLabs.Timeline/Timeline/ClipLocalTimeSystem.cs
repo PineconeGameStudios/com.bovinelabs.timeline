@@ -16,17 +16,16 @@ namespace BovineLabs.Timeline
     [UpdateInGroup(typeof(TimelineUpdateSystemGroup))]
     public partial struct ClipLocalTimeSystem : ISystem
     {
-        /// <inheritdoc/>
+        /// <inheritdoc />
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             state.Dependency = new LocalTimeJob
-                {
-                    ExtrapolationLoopType = SystemAPI.GetComponentTypeHandle<ExtrapolationLoop>(true),
-                    ExtrapolationPingPongType = SystemAPI.GetComponentTypeHandle<ExtrapolationPingPong>(true),
-                    ExtrapolationHoldType = SystemAPI.GetComponentTypeHandle<ExtrapolationHold>(true),
-                }
-                .ScheduleParallel(state.Dependency);
+            {
+                ExtrapolationLoopType = SystemAPI.GetComponentTypeHandle<ExtrapolationLoop>(true),
+                ExtrapolationPingPongType = SystemAPI.GetComponentTypeHandle<ExtrapolationPingPong>(true),
+                ExtrapolationHoldType = SystemAPI.GetComponentTypeHandle<ExtrapolationHold>(true),
+            }.ScheduleParallel(state.Dependency);
         }
 
         [WithAll(typeof(TimelineActive))]
@@ -34,13 +33,23 @@ namespace BovineLabs.Timeline
         [BurstCompile]
         private unsafe partial struct LocalTimeJob : IJobEntity, IJobEntityChunkBeginEnd
         {
-            [ReadOnly] public ComponentTypeHandle<ExtrapolationLoop> ExtrapolationLoopType;
-            [ReadOnly] public ComponentTypeHandle<ExtrapolationPingPong> ExtrapolationPingPongType;
-            [ReadOnly] public ComponentTypeHandle<ExtrapolationHold> ExtrapolationHoldType;
+            [ReadOnly]
+            public ComponentTypeHandle<ExtrapolationLoop> ExtrapolationLoopType;
 
-            [NativeDisableUnsafePtrRestriction] private ExtrapolationLoop* loops;
-            [NativeDisableUnsafePtrRestriction] private ExtrapolationPingPong* pingPongs;
-            [NativeDisableUnsafePtrRestriction] private ExtrapolationHold* holds;
+            [ReadOnly]
+            public ComponentTypeHandle<ExtrapolationPingPong> ExtrapolationPingPongType;
+
+            [ReadOnly]
+            public ComponentTypeHandle<ExtrapolationHold> ExtrapolationHoldType;
+
+            [NativeDisableUnsafePtrRestriction]
+            private ExtrapolationLoop* loops;
+
+            [NativeDisableUnsafePtrRestriction]
+            private ExtrapolationPingPong* pingPongs;
+
+            [NativeDisableUnsafePtrRestriction]
+            private ExtrapolationHold* holds;
 
             public bool OnChunkBegin(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
@@ -51,13 +60,11 @@ namespace BovineLabs.Timeline
                 return true;
             }
 
-            public void OnChunkEnd(
-                in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask, bool chunkWasExecuted)
+            public void OnChunkEnd(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask, bool chunkWasExecuted)
             {
             }
 
-            private void Execute(
-                [EntityIndexInQuery] int entityIndexInQuery, ref LocalTime localTime, in TimerData timerData, in TimeTransform timeTransform)
+            private void Execute([EntityIndexInQuery] int entityIndexInQuery, ref LocalTime localTime, in TimerData timerData, in TimeTransform timeTransform)
             {
                 UpdateLocalTime(ref localTime, timerData, timeTransform);
 

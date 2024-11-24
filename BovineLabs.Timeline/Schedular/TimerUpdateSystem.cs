@@ -19,11 +19,12 @@ namespace BovineLabs.Timeline.Schedular
     {
         private EntityQuery stoppedQuery;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            this.stoppedQuery = SystemAPI.QueryBuilder()
+            this.stoppedQuery = SystemAPI
+                .QueryBuilder()
                 .WithAll<TimelineActivePrevious, TimerDataLink>()
                 .WithDisabled<TimelineActive>()
                 .WithPresent<TimerPaused>()
@@ -32,36 +33,33 @@ namespace BovineLabs.Timeline.Schedular
             this.stoppedQuery.SetChangedVersionFilter(ComponentType.ReadWrite<TimelineActive>());
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             state.Dependency = new TimerStartedJob
-                {
-                    TimerDatas = SystemAPI.GetComponentLookup<TimerData>(),
-                    Actives = SystemAPI.GetComponentLookup<TimelineActive>(),
-                }
-                .ScheduleParallel(state.Dependency);
+            {
+                TimerDatas = SystemAPI.GetComponentLookup<TimerData>(),
+                Actives = SystemAPI.GetComponentLookup<TimelineActive>(),
+            }.ScheduleParallel(state.Dependency);
 
             state.Dependency = new TimersUpdateJob
-                {
-                    TimerDatas = SystemAPI.GetComponentLookup<TimerData>(),
-                    Actives = SystemAPI.GetComponentLookup<TimelineActive>(),
-                    TimerPauseds = SystemAPI.GetComponentLookup<TimerPaused>(),
-                    TimerDataLinks = SystemAPI.GetBufferLookup<TimerDataLink>(true),
-                    CompositeTimerLinks = SystemAPI.GetBufferLookup<CompositeTimerLink>(true),
-                    CompositeTimers = SystemAPI.GetComponentLookup<CompositeTimer>(true),
-                    Timers = SystemAPI.GetComponentLookup<Timer>(),
-                }
-                .ScheduleParallel(state.Dependency);
+            {
+                TimerDatas = SystemAPI.GetComponentLookup<TimerData>(),
+                Actives = SystemAPI.GetComponentLookup<TimelineActive>(),
+                TimerPauseds = SystemAPI.GetComponentLookup<TimerPaused>(),
+                TimerDataLinks = SystemAPI.GetBufferLookup<TimerDataLink>(true),
+                CompositeTimerLinks = SystemAPI.GetBufferLookup<CompositeTimerLink>(true),
+                CompositeTimers = SystemAPI.GetComponentLookup<CompositeTimer>(true),
+                Timers = SystemAPI.GetComponentLookup<Timer>(),
+            }.ScheduleParallel(state.Dependency);
 
             state.Dependency = new TimerStoppedJob
-                {
-                    TimerDataLinks = SystemAPI.GetBufferTypeHandle<TimerDataLink>(true),
-                    TimerPausedHandle = SystemAPI.GetComponentTypeHandle<TimerPaused>(),
-                    Actives = SystemAPI.GetComponentLookup<TimelineActive>(),
-                }
-                .ScheduleParallel(this.stoppedQuery, state.Dependency);
+            {
+                TimerDataLinks = SystemAPI.GetBufferTypeHandle<TimerDataLink>(true),
+                TimerPausedHandle = SystemAPI.GetComponentTypeHandle<TimerPaused>(),
+                Actives = SystemAPI.GetComponentLookup<TimelineActive>(),
+            }.ScheduleParallel(this.stoppedQuery, state.Dependency);
         }
 
         [WithAll(typeof(TimelineActive))]
@@ -156,11 +154,7 @@ namespace BovineLabs.Timeline.Schedular
             public ComponentLookup<Timer> Timers;
 
             private void Execute(
-                Entity entity,
-                ref Timer timer,
-                ref TimerRange timerRange,
-                in ClockData clockData,
-                in DynamicBuffer<TimerDataLink> timerDataLinks)
+                Entity entity, ref Timer timer, ref TimerRange timerRange, in ClockData clockData, in DynamicBuffer<TimerDataLink> timerDataLinks)
             {
                 var timerPaused = this.TimerPauseds.GetEnabledRefRW<TimerPaused>(entity);
                 var active = this.Actives.GetEnableRefRWNoChangeFilter(entity);
@@ -189,10 +183,7 @@ namespace BovineLabs.Timeline.Schedular
                 this.Update(entity, source, timerDataLinks);
             }
 
-            private void Update(
-                Entity entity,
-                in TimerData source,
-                in DynamicBuffer<TimerDataLink> timerDataLinks)
+            private void Update(Entity entity, in TimerData source, in DynamicBuffer<TimerDataLink> timerDataLinks)
             {
                 foreach (var link in timerDataLinks.AsNativeArray())
                 {

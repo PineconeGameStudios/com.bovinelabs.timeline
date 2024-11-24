@@ -15,7 +15,7 @@ namespace BovineLabs.Timeline
     {
         private CopyEnableable<TimelineActivePrevious, TimelineActive> impl;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public void OnCreate(ref SystemState state)
         {
             this.impl.OnCreate(ref state);

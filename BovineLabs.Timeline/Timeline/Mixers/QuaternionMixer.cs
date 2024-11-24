@@ -4,13 +4,18 @@
 
 namespace BovineLabs.Timeline
 {
-    using BovineLabs.Timeline.Data;
     using Unity.Mathematics;
 
     public readonly struct QuaternionMixer : IMixer<quaternion>
     {
-        public quaternion Lerp(in quaternion a, in quaternion b, float s) => math.nlerp(a, b, s);
+        public quaternion Lerp(in quaternion a, in quaternion b, float s)
+        {
+            return math.nlerp(a, b, s);
+        }
 
-        public quaternion Add(in quaternion a, in quaternion b) => math.mul(a, b);
+        public quaternion Add(in quaternion a, in quaternion b)
+        {
+            return math.mul(a, b);
+        }
     }
 }

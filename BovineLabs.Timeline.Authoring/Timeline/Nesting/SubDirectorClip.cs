@@ -19,17 +19,17 @@ namespace BovineLabs.Timeline.Authoring
         // /// <summary> Optional reference to a 'take' in the nested timeline. </summary>
         // public EditTrack Take;
 
-        /// <summary>The default duration of the timeline. This is set in the editor based on the length of the timeline assigned. </summary>
+        /// <summary> The default duration of the timeline. This is set in the editor based on the length of the timeline assigned. </summary>
         [HideInInspector]
         public double DefaultClipDuration = TimelineClip.kDefaultClipDurationInSeconds;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public ClipCaps clipCaps => ClipCaps.ClipIn | ClipCaps.SpeedMultiplier; /*| ClipCaps.Looping;*/
 
         /// <summary> Gets this is the default duration of the clip used by the UI. </summary>
         public override double duration => /*Take != null ? Take.RemappedDuration : */this.DefaultClipDuration;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public override void Bake(Entity clipEntity, BakingContext context)
         {
             // instead of returning a single clip entity, compiles the nested timeline.
@@ -72,8 +72,8 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
-        /// <summary>Overrides the playable creation</summary>
-        /// <remarks>Needed to make the sub director in the window contain the correct time</remarks>
+        /// <summary> Overrides the playable creation </summary>
+        /// <remarks> Needed to make the sub director in the window contain the correct time </remarks>
         public override Playable CreatePlayable(PlayableGraph graph, GameObject go)
         {
             var director = go.GetComponent<PlayableDirector>();

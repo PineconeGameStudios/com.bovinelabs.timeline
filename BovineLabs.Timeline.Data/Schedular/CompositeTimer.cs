@@ -13,16 +13,16 @@ namespace BovineLabs.Timeline.Data.Schedular
     [WriteGroup(typeof(ClockData))]
     public struct CompositeTimer : IComponentData
     {
-        /// <summary>The timer this is a transformation of. </summary>
+        /// <summary> The timer this is a transformation of. </summary>
         public Entity SourceTimer;
 
-        /// <summary>Time offset from the source timer</summary>
+        /// <summary> Time offset from the source timer </summary>
         public DiscreteTime Offset;
 
-        /// <summary>The scale offset from the source timer</summary>
+        /// <summary> The scale offset from the source timer </summary>
         public double Scale;
 
-        /// <summary>The range of the source timer. This range will raise the culled flag inside TimerData that reference this</summary>
+        /// <summary> The range of the source timer. This range will raise the culled flag inside TimerData that reference this </summary>
         public ActiveRange ActiveRange;
     }
 }

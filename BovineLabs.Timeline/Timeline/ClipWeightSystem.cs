@@ -12,7 +12,7 @@ namespace BovineLabs.Timeline
     [UpdateAfter(typeof(ClipLocalTimeSystem))]
     public partial struct ClipWeightSystem : ISystem
     {
-        /// <inheritdoc/>
+        /// <inheritdoc />
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {

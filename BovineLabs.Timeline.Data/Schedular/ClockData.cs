@@ -9,11 +9,8 @@ namespace BovineLabs.Timeline.Data.Schedular
 
     /// <summary>
     /// Component data representing the clock data required to update a time.
-    ///
     /// This needs to be paired with a single clock type. This information is written first in the ClockUpdateSystem
     /// then used in the TimerUpdateSystem to update the timer.
-    ///
-    ///
     /// </summary>
     public struct ClockData : IComponentData
     {

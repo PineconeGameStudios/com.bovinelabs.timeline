@@ -29,20 +29,34 @@ namespace BovineLabs.Timeline.Data.Schedular
     /// <summary> Extension Methods for ActiveRange </summary>
     public static class ActiveRangeExtensions
     {
-        /// <summary>Returns true the range is valid</summary>
-        public static bool IsValid(this ActiveRange range) => range.Start < range.End;
+        /// <summary> Returns true the range is valid </summary>
+        public static bool IsValid(this ActiveRange range)
+        {
+            return range.Start < range.End;
+        }
 
-        /// <summary>Return true if the ranges overlap</summary>
-        public static bool Overlaps(this ActiveRange range, ActiveRange other) =>
-            range.IsValid() && other.IsValid() && range.Start < other.End && other.Start < range.End;
+        /// <summary> Return true if the ranges overlap </summary>
+        public static bool Overlaps(this ActiveRange range, ActiveRange other)
+        {
+            return range.IsValid() && other.IsValid() && range.Start < other.End && other.Start < range.End;
+        }
 
-        /// <summary>Returns whether the time is within the range</summary>
-        public static bool Contains(this ActiveRange range, DiscreteTime t) => range.Start <= t && range.End > t;
+        /// <summary> Returns whether the time is within the range </summary>
+        public static bool Contains(this ActiveRange range, DiscreteTime t)
+        {
+            return range.Start <= t && range.End > t;
+        }
 
-        /// <summary>Returns whether the given range is completely contained within this range</summary>
-        public static bool Contains(this ActiveRange range, ActiveRange other) => range.Start <= other.Start && range.End >= other.End;
+        /// <summary> Returns whether the given range is completely contained within this range </summary>
+        public static bool Contains(this ActiveRange range, ActiveRange other)
+        {
+            return range.Start <= other.Start && range.End >= other.End;
+        }
 
-        /// <summary>The length of the active range.</summary>
-        public static DiscreteTime Length(this ActiveRange range) => range.End - range.Start;
+        /// <summary> The length of the active range. </summary>
+        public static DiscreteTime Length(this ActiveRange range)
+        {
+            return range.End - range.Start;
+        }
     }
 }

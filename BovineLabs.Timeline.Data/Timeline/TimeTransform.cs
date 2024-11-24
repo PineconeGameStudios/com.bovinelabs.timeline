@@ -19,7 +19,7 @@ namespace BovineLabs.Timeline.Data
         Pre = 1,
         Post = 2,
         Both = Pre | Post,
-    };
+    }
 
     /// <summary> The transformation from the timer to the local clip space. </summary>
     public struct TimeTransform : IComponentData
@@ -62,7 +62,10 @@ namespace BovineLabs.Timeline.Data
 
         public override int GetHashCode()
         {
-            return math.rol(this.start.GetHashCode(), 1) + math.rol(this.end.GetHashCode(), 7) + math.rol(this.clipIn.GetHashCode(), 12) + math.rol(this.scale.GetHashCode(), 18);
+            return math.rol(this.start.GetHashCode(), 1) +
+                math.rol(this.end.GetHashCode(), 7) +
+                math.rol(this.clipIn.GetHashCode(), 12) +
+                math.rol(this.scale.GetHashCode(), 18);
         }
     }
 }

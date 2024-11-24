@@ -11,7 +11,9 @@
     "com.unity.timeline": "1.8.6"
   },
   "keywords": [
-    "DOTS", "Entities", "ECS"
+    "DOTS",
+    "Entities",
+    "ECS"
   ],
   "author": {
     "name": "BovineLabs"

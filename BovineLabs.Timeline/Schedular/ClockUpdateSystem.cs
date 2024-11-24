@@ -13,6 +13,7 @@ namespace BovineLabs.Timeline.Schedular
     using Unity.Collections.LowLevel.Unsafe;
     using Unity.Entities;
     using Unity.IntegerTime;
+    using UnityEngine;
 
     /// <summary>
     /// System that captures time update data from different clocks
@@ -24,11 +25,12 @@ namespace BovineLabs.Timeline.Schedular
     [UpdateInGroup(typeof(ScheduleSystemGroup))]
     public partial struct ClockUpdateSystem : ISystem
     {
-        /// <inheritdoc/>
+        /// <inheritdoc />
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var query = SystemAPI.QueryBuilder()
+            var query = SystemAPI
+                .QueryBuilder()
                 .WithAllRW<ClockData>()
                 .WithAll<TimelineActive>() // We don't check per entity but this is just used to early out entire chunks
                 .WithAny<ClockTypeConstant, ClockTypeGameTime, ClockTypeUnscaledGameTime>()
@@ -36,18 +38,15 @@ namespace BovineLabs.Timeline.Schedular
                 .Build();
 
             state.Dependency = new ClockUpdateJob
-                {
-                    ClockDataType = SystemAPI.GetComponentTypeHandle<ClockData>(),
-
-                    ClockConstantType = SystemAPI.GetComponentTypeHandle<ClockTypeConstant>(true),
-                    ClockGameTimeType = SystemAPI.GetComponentTypeHandle<ClockTypeGameTime>(true),
-                    ClockUnscaledGameTimeType = SystemAPI.GetComponentTypeHandle<ClockTypeUnscaledGameTime>(true),
-
-                    GameTimeScale = UnityEngine.Time.timeScale,
-                    GameTimeDeltaTime = new DiscreteTime(SystemAPI.Time.DeltaTime),
-                    UnscaledGameTimeDeltaTime = new DiscreteTime(UnityEngine.Time.unscaledDeltaTime),
-                }
-                .ScheduleParallel(query, state.Dependency);
+            {
+                ClockDataType = SystemAPI.GetComponentTypeHandle<ClockData>(),
+                ClockConstantType = SystemAPI.GetComponentTypeHandle<ClockTypeConstant>(true),
+                ClockGameTimeType = SystemAPI.GetComponentTypeHandle<ClockTypeGameTime>(true),
+                ClockUnscaledGameTimeType = SystemAPI.GetComponentTypeHandle<ClockTypeUnscaledGameTime>(true),
+                GameTimeScale = Time.timeScale,
+                GameTimeDeltaTime = new DiscreteTime(SystemAPI.Time.DeltaTime),
+                UnscaledGameTimeDeltaTime = new DiscreteTime(Time.unscaledDeltaTime),
+            }.ScheduleParallel(query, state.Dependency);
         }
 
         [BurstCompile]

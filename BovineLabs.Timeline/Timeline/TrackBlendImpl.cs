@@ -66,9 +66,7 @@ namespace BovineLabs.Timeline
         /// <param name="accumulateWeightedAnimationJob"> Ignore accumulateWeightedAnimationJob. </param>
         /// <returns> The hashmap of the blended results. See samples on how to use this to write results. </returns>
         public NativeParallelHashMap<Entity, MixData<T>>.ReadOnly Update(
-            ref SystemState state,
-            ResizeJob resizeJob = default,
-            AnimateUnblendedJob animateUnblendedJob = default,
+            ref SystemState state, ResizeJob resizeJob = default, AnimateUnblendedJob animateUnblendedJob = default,
             AccumulateWeightedAnimationJob accumulateWeightedAnimationJob = default)
         {
             this.animatedHandle.Update(ref state);
@@ -148,8 +146,10 @@ namespace BovineLabs.Timeline
                 }
                 else
                 {
-                    var edgeCount = math.countbits(chunkEnabledMask.ULong0 ^ (chunkEnabledMask.ULong0 << 1)) +
-                        math.countbits(chunkEnabledMask.ULong1 ^ (chunkEnabledMask.ULong1 << 1)) - 1;
+                    var edgeCount = (math.countbits(chunkEnabledMask.ULong0 ^ (chunkEnabledMask.ULong0 << 1)) +
+                            math.countbits(chunkEnabledMask.ULong1 ^ (chunkEnabledMask.ULong1 << 1))) -
+                        1;
+
                     var useRanges = edgeCount <= 4;
                     if (useRanges)
                     {
@@ -247,8 +247,10 @@ namespace BovineLabs.Timeline
                 }
                 else
                 {
-                    var edgeCount = math.countbits(chunkEnabledMask.ULong0 ^ (chunkEnabledMask.ULong0 << 1)) +
-                        math.countbits(chunkEnabledMask.ULong1 ^ (chunkEnabledMask.ULong1 << 1)) - 1;
+                    var edgeCount = (math.countbits(chunkEnabledMask.ULong0 ^ (chunkEnabledMask.ULong0 << 1)) +
+                            math.countbits(chunkEnabledMask.ULong1 ^ (chunkEnabledMask.ULong1 << 1))) -
+                        1;
+
                     var useRanges = edgeCount <= 4;
                     if (useRanges)
                     {

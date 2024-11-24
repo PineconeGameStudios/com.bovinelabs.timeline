@@ -20,19 +20,19 @@ namespace BovineLabs.Timeline.Editor
     {
         private NativeHashSet<Entity> toDisable;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         protected override void OnCreate()
         {
             this.toDisable = new NativeHashSet<Entity>(1, Allocator.Persistent);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         protected override void OnDestroy()
         {
             this.toDisable.Dispose();
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         protected override void OnUpdate()
         {
             var isActiveQuery = SystemAPI.QueryBuilder().WithAll<Timer, ClockData, TimelineActive>().Build();
@@ -69,7 +69,11 @@ namespace BovineLabs.Timeline.Editor
             foreach (var e in isActiveQuery.ToEntityArray(this.WorldUpdateAllocator))
             {
                 this.toDisable.Add(e);
-                this.EntityManager.SetComponentData(e, new Timer { Time = new DiscreteTime(0), TimeScale = 1 });
+                this.EntityManager.SetComponentData(e, new Timer
+                {
+                    Time = new DiscreteTime(0),
+                    TimeScale = 1,
+                });
             }
         }
 
@@ -94,7 +98,12 @@ namespace BovineLabs.Timeline.Editor
                     if (mask.MatchesIgnoreFilter(e))
                     {
                         this.EntityManager.SetComponentEnabled<TimelineActive>(e, true);
-                        this.EntityManager.SetComponentData(e, new Timer { Time = new DiscreteTime(director.time), TimeScale = 1 });
+                        this.EntityManager.SetComponentData(e, new Timer
+                        {
+                            Time = new DiscreteTime(director.time),
+                            TimeScale = 1,
+                        });
+
                         this.toDisable.Remove(e);
                         break;
                     }
