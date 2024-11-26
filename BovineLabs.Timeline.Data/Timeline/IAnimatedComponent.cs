@@ -1,4 +1,4 @@
-﻿// <copyright file="AnimatedComponent.cs" company="BovineLabs">
+﻿// <copyright file="IAnimatedComponent.cs" company="BovineLabs">
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
@@ -7,7 +7,7 @@ namespace BovineLabs.Timeline.Data
     using BovineLabs.Core.Collections;
     using Unity.Entities;
 
-    public interface IAnimatedComponent<T, TB> : IComponentData
+    public interface IAnimatedComponent<out T, out TB> : IComponentData
         where T : unmanaged
         where TB : unmanaged, IBlobCurveSampler<T>
     {
