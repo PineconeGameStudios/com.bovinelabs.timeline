@@ -176,10 +176,6 @@ namespace BovineLabs.Timeline.Authoring
             return newContext;
         }
 
-        /// <summary>
-        /// Creates an entity for the track. This is used to provide an active range for any prefabs that are spawned on the tracks.
-        /// Creates a tag, that is active while the corresponding timer is active
-        /// </summary>
         public static Entity CreateTrackEntity(this BakingContext context)
         {
             if (context.Track == null || context.Timer == Entity.Null || context.Binding == null)

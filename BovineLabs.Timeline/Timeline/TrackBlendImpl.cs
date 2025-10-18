@@ -132,72 +132,14 @@ namespace BovineLabs.Timeline
                 var animateds = (TC*)chunk.GetRequiredComponentDataPtrRW(ref this.AnimatedHandle);
                 var trackBindings = (TrackBinding*)chunk.GetRequiredComponentDataPtrRO(ref this.TrackBindingHandle);
                 var localTimes = (LocalTime*)chunk.GetRequiredComponentDataPtrRO(ref this.LocalTimeHandle);
-                var chunkEntityCount = chunk.Count;
 
-                if (!useEnabledMask)
+                var e = new ChunkEntityEnumerator(useEnabledMask, chunkEnabledMask, chunk.Count);
+                while (e.NextEntityIndex(out var entityIndexInChunk))
                 {
-                    for (var entityIndexInChunk = 0; entityIndexInChunk < chunkEntityCount; ++entityIndexInChunk)
-                    {
-                        ref var animated = ref animateds[entityIndexInChunk];
-                        ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
-                        ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                        this.Execute(ref animated, in trackBinding, in localTime);
-                    }
-                }
-                else
-                {
-                    var edgeCount = (math.countbits(chunkEnabledMask.ULong0 ^ (chunkEnabledMask.ULong0 << 1)) +
-                            math.countbits(chunkEnabledMask.ULong1 ^ (chunkEnabledMask.ULong1 << 1))) -
-                        1;
-
-                    var useRanges = edgeCount <= 4;
-                    if (useRanges)
-                    {
-                        var chunkEndIndex = 0;
-
-                        while (EnabledBitUtility.TryGetNextRange(chunkEnabledMask, chunkEndIndex, out var entityIndexInChunk, out chunkEndIndex))
-                        {
-                            while (entityIndexInChunk < chunkEndIndex)
-                            {
-                                ref var animated = ref animateds[entityIndexInChunk];
-                                ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
-                                ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                                this.Execute(ref animated, in trackBinding, in localTime);
-                                entityIndexInChunk++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var mask64 = chunkEnabledMask.ULong0;
-                        var count = math.min(64, chunkEntityCount);
-                        for (var entityIndexInChunk = 0; entityIndexInChunk < count; ++entityIndexInChunk)
-                        {
-                            if ((mask64 & 1) != 0)
-                            {
-                                ref var animated = ref animateds[entityIndexInChunk];
-                                ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
-                                ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                                this.Execute(ref animated, in trackBinding, in localTime);
-                            }
-
-                            mask64 >>= 1;
-                        }
-
-                        mask64 = chunkEnabledMask.ULong1;
-                        for (var entityIndexInChunk = 64; entityIndexInChunk < chunkEntityCount; ++entityIndexInChunk)
-                        {
-                            if ((mask64 & 1) != 0)
-                            {
-                                ref var animated = ref animateds[entityIndexInChunk];
-                                ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
-                                ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                                this.Execute(ref animated, in trackBinding, in localTime);
-                            }
-
-                            mask64 >>= 1;
-                        }
-                    }
+                    ref var animated = ref animateds[entityIndexInChunk];
+                    ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
+                    ref readonly var localTime = ref localTimes[entityIndexInChunk];
+                    this.Execute(ref animated, trackBinding, localTime);
                 }
             }
 
@@ -232,76 +174,14 @@ namespace BovineLabs.Timeline
                 var localTimes = (LocalTime*)chunk.GetRequiredComponentDataPtrRO(ref this.LocalTimeHandle);
                 var clipWeights = (ClipWeight*)chunk.GetRequiredComponentDataPtrRO(ref this.ClipWeightHandle);
 
-                var chunkEntityCount = chunk.Count;
-
-                if (!useEnabledMask)
+                var e = new ChunkEntityEnumerator(useEnabledMask, chunkEnabledMask, chunk.Count);
+                while (e.NextEntityIndex(out var entityIndexInChunk))
                 {
-                    for (var entityIndexInChunk = 0; entityIndexInChunk < chunkEntityCount; ++entityIndexInChunk)
-                    {
-                        ref var animated = ref animateds[entityIndexInChunk];
-                        ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
-                        ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                        ref readonly var clipWeight = ref clipWeights[entityIndexInChunk];
-                        this.Execute(ref animated, in trackBinding, in localTime, in clipWeight);
-                    }
-                }
-                else
-                {
-                    var edgeCount = (math.countbits(chunkEnabledMask.ULong0 ^ (chunkEnabledMask.ULong0 << 1)) +
-                            math.countbits(chunkEnabledMask.ULong1 ^ (chunkEnabledMask.ULong1 << 1))) -
-                        1;
-
-                    var useRanges = edgeCount <= 4;
-                    if (useRanges)
-                    {
-                        var chunkEndIndex = 0;
-
-                        while (EnabledBitUtility.TryGetNextRange(chunkEnabledMask, chunkEndIndex, out var entityIndexInChunk, out chunkEndIndex))
-                        {
-                            while (entityIndexInChunk < chunkEndIndex)
-                            {
-                                ref var animated = ref animateds[entityIndexInChunk];
-                                ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
-                                ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                                ref readonly var clipWeight = ref clipWeights[entityIndexInChunk];
-                                this.Execute(ref animated, in trackBinding, in localTime, in clipWeight);
-                                entityIndexInChunk++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var mask64 = chunkEnabledMask.ULong0;
-                        var count = math.min(64, chunkEntityCount);
-                        for (var entityIndexInChunk = 0; entityIndexInChunk < count; ++entityIndexInChunk)
-                        {
-                            if ((mask64 & 1) != 0)
-                            {
-                                ref var animated = ref animateds[entityIndexInChunk];
-                                ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
-                                ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                                ref readonly var clipWeight = ref clipWeights[entityIndexInChunk];
-                                this.Execute(ref animated, in trackBinding, in localTime, in clipWeight);
-                            }
-
-                            mask64 >>= 1;
-                        }
-
-                        mask64 = chunkEnabledMask.ULong1;
-                        for (var entityIndexInChunk = 64; entityIndexInChunk < chunkEntityCount; ++entityIndexInChunk)
-                        {
-                            if ((mask64 & 1) != 0)
-                            {
-                                ref var animated = ref animateds[entityIndexInChunk];
-                                ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
-                                ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                                ref readonly var clipWeight = ref clipWeights[entityIndexInChunk];
-                                this.Execute(ref animated, in trackBinding, in localTime, in clipWeight);
-                            }
-
-                            mask64 >>= 1;
-                        }
-                    }
+                    ref var animated = ref animateds[entityIndexInChunk];
+                    ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
+                    ref readonly var localTime = ref localTimes[entityIndexInChunk];
+                    ref readonly var clipWeight = ref clipWeights[entityIndexInChunk];
+                    this.Execute(ref animated, in trackBinding, in localTime, in clipWeight);
                 }
             }
 
