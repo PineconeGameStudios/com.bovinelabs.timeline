@@ -1,4 +1,4 @@
-﻿// <copyright file="Float2Mixer.cs" company="BovineLabs">
+// <copyright file="Float4Mixer.cs" company="BovineLabs">
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
@@ -6,14 +6,14 @@ namespace BovineLabs.Timeline
 {
     using Unity.Mathematics;
 
-    public readonly struct Float2Mixer : IMixer<float2>
+    public readonly struct Float4Mixer : IMixer<float4>
     {
-        public float2 Lerp(in float2 a, in float2 b, in float s)
+        public float4 Lerp(in float4 a, in float4 b, in float s)
         {
             return math.lerp(a, b, s);
         }
 
-        public float2 Add(in float2 a, in float2 b)
+        public float4 Add(in float4 a, in float4 b)
         {
             return a + b;
         }

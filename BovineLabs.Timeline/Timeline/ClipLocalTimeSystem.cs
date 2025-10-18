@@ -99,58 +99,58 @@ namespace BovineLabs.Timeline
             private static void UpdateLoop(
                 ref LocalTime localTime, in TimerData timerData, in TimeTransform timeTransform, in ExtrapolationLoop extrapolationLoop)
             {
-                var duration = timeTransform.end - timeTransform.start;
+                var duration = timeTransform.End - timeTransform.Start;
                 if (duration <= DiscreteTime.Zero)
                 {
                     localTime.Value = DiscreteTime.Zero;
                 }
-                else if ((extrapolationLoop.ExtrapolateOptions & ExtrapolationPosition.Pre) != 0 && timerData.Time < timeTransform.start)
+                else if ((extrapolationLoop.ExtrapolateOptions & ExtrapolationPosition.Pre) != 0 && timerData.Time < timeTransform.Start)
                 {
-                    var time = timerData.Time - timeTransform.start;
+                    var time = timerData.Time - timeTransform.Start;
                     time = duration - (-time % duration);
-                    localTime.Value = (time * timeTransform.scale) + timeTransform.clipIn;
+                    localTime.Value = (time * timeTransform.Scale) + timeTransform.ClipIn;
                 }
-                else if ((extrapolationLoop.ExtrapolateOptions & ExtrapolationPosition.Post) != 0 && timerData.Time >= timeTransform.end)
+                else if ((extrapolationLoop.ExtrapolateOptions & ExtrapolationPosition.Post) != 0 && timerData.Time >= timeTransform.End)
                 {
-                    var time = (timerData.Time - timeTransform.start) % duration;
-                    localTime.Value = (time * timeTransform.scale) + timeTransform.clipIn;
+                    var time = (timerData.Time - timeTransform.Start) % duration;
+                    localTime.Value = (time * timeTransform.Scale) + timeTransform.ClipIn;
                 }
             }
 
             private static void UpdatePingPong(
                 ref LocalTime localTime, in TimerData timerData, in TimeTransform timeTransform, in ExtrapolationPingPong extrapolationPingPong)
             {
-                var duration = timeTransform.end - timeTransform.start;
+                var duration = timeTransform.End - timeTransform.Start;
                 if (duration <= DiscreteTime.Zero)
                 {
                     localTime.Value = DiscreteTime.Zero;
                 }
-                else if ((extrapolationPingPong.ExtrapolateOptions & ExtrapolationPosition.Pre) != 0 && timerData.Time < timeTransform.start)
+                else if ((extrapolationPingPong.ExtrapolateOptions & ExtrapolationPosition.Pre) != 0 && timerData.Time < timeTransform.Start)
                 {
-                    var time = timerData.Time - timeTransform.start;
+                    var time = timerData.Time - timeTransform.Start;
                     time = (duration * 2) - (-time % (duration * 2));
                     time = duration - (time - duration).Abs();
-                    localTime.Value = (time * timeTransform.scale) + timeTransform.clipIn;
+                    localTime.Value = (time * timeTransform.Scale) + timeTransform.ClipIn;
                 }
-                else if ((extrapolationPingPong.ExtrapolateOptions & ExtrapolationPosition.Post) != 0 && timerData.Time >= timeTransform.end)
+                else if ((extrapolationPingPong.ExtrapolateOptions & ExtrapolationPosition.Post) != 0 && timerData.Time >= timeTransform.End)
                 {
-                    var time = timerData.Time - timeTransform.start;
+                    var time = timerData.Time - timeTransform.Start;
                     time %= duration * 2;
                     time = duration - (time - duration).Abs();
-                    localTime.Value = (time * timeTransform.scale) + timeTransform.clipIn;
+                    localTime.Value = (time * timeTransform.Scale) + timeTransform.ClipIn;
                 }
             }
 
             private static void UpdateHold(
                 ref LocalTime localTime, in TimerData timerData, in TimeTransform timeTransform, in ExtrapolationHold extrapolationHold)
             {
-                if ((extrapolationHold.ExtrapolateOptions & ExtrapolationPosition.Pre) != 0 && timerData.Time < timeTransform.start)
+                if ((extrapolationHold.ExtrapolateOptions & ExtrapolationPosition.Pre) != 0 && timerData.Time < timeTransform.Start)
                 {
-                    localTime.Value = timeTransform.clipIn;
+                    localTime.Value = timeTransform.ClipIn;
                 }
-                else if ((extrapolationHold.ExtrapolateOptions & ExtrapolationPosition.Post) != 0 && timerData.Time >= timeTransform.end)
+                else if ((extrapolationHold.ExtrapolateOptions & ExtrapolationPosition.Post) != 0 && timerData.Time >= timeTransform.End)
                 {
-                    localTime.Value = ((timeTransform.end - timeTransform.start) * timeTransform.scale) + timeTransform.clipIn;
+                    localTime.Value = ((timeTransform.End - timeTransform.Start) * timeTransform.Scale) + timeTransform.ClipIn;
                 }
             }
         }

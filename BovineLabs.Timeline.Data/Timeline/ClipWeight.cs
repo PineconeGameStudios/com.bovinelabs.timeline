@@ -19,6 +19,6 @@ namespace BovineLabs.Timeline.Data
     public struct AnimatedClipWeight : IComponentData
     {
         public BlobCurveSampler Value;
-        // public BlobAssetReference<AnimationCurveBlob> Value;
+        // public BlobAssetReference<BlobCurve> Value;
     }
 }

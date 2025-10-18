@@ -31,10 +31,10 @@ namespace BovineLabs.Timeline.Authoring
         {
             return new TimeTransform
             {
-                start = new DiscreteTime(clip.start),
-                end = new DiscreteTime(clip.end),
-                scale = clip.timeScale,
-                clipIn = new DiscreteTime(clip.clipIn),
+                Start = new DiscreteTime(clip.start),
+                End = new DiscreteTime(clip.end),
+                Scale = clip.timeScale,
+                ClipIn = new DiscreteTime(clip.clipIn),
             };
         }
 

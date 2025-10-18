@@ -4,6 +4,7 @@
 
 namespace BovineLabs.Timeline.Authoring
 {
+    using BovineLabs.Timeline.Data;
     using BovineLabs.Timeline.Data.Schedular;
     using Unity.Entities;
     using UnityEngine.Playables;
@@ -29,6 +30,8 @@ namespace BovineLabs.Timeline.Authoring
                     var clipEntity = dotsClip.CreateClipEntity(clipContext);
                     if (clipEntity != Entity.Null)
                     {
+                        clipContext.Baker.AddComponent(clipEntity, new DirectorRoot { Director = context.Target });
+
                         context.SharedContextValues.ClipEntities.Add((clipEntity, clip));
 
                         dotsClip.Bake(clipEntity, clipContext);

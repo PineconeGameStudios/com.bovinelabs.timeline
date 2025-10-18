@@ -8,7 +8,7 @@ namespace BovineLabs.Timeline
 
     public readonly struct QuaternionMixer : IMixer<quaternion>
     {
-        public quaternion Lerp(in quaternion a, in quaternion b, float s)
+        public quaternion Lerp(in quaternion a, in quaternion b, in float s)
         {
             return math.nlerp(a, b, s);
         }

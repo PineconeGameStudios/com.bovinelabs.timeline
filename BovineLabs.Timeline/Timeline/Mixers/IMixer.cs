@@ -9,7 +9,7 @@ namespace BovineLabs.Timeline
     public interface IMixer<T> : IComponentData
         where T : unmanaged
     {
-        T Lerp(in T a, in T b, float s);
+        T Lerp(in T a, in T b, in float s);
 
         T Add(in T a, in T b);
     }

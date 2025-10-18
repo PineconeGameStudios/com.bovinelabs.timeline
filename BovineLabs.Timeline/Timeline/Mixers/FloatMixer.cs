@@ -8,7 +8,7 @@ namespace BovineLabs.Timeline
 
     public readonly struct FloatMixer : IMixer<float>
     {
-        public float Lerp(in float a, in float b, float s)
+        public float Lerp(in float a, in float b, in float s)
         {
             return math.lerp(a, b, s);
         }

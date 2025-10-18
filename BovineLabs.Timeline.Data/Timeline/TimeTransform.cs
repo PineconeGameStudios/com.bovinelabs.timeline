@@ -24,10 +24,10 @@ namespace BovineLabs.Timeline.Data
     /// <summary> The transformation from the timer to the local clip space. </summary>
     public struct TimeTransform : IComponentData
     {
-        public DiscreteTime start;
-        public DiscreteTime end;
-        public DiscreteTime clipIn;
-        public double scale;
+        public DiscreteTime Start;
+        public DiscreteTime End;
+        public DiscreteTime ClipIn;
+        public double Scale;
 
         public static bool operator ==(TimeTransform options1, TimeTransform options2)
         {
@@ -41,12 +41,12 @@ namespace BovineLabs.Timeline.Data
 
         public readonly DiscreteTime ToLocalTimeUnbound(DiscreteTime time)
         {
-            return ((time - this.start) * this.scale) + this.clipIn;
+            return ((time - this.Start) * this.Scale) + this.ClipIn;
         }
 
         public readonly bool IsLocalTimeBounded(DiscreteTime time)
         {
-            var length = (this.end - this.start) * this.scale;
+            var length = (this.End - this.Start) * this.Scale;
             return time >= DiscreteTime.Zero && time <= length;
         }
 
@@ -57,15 +57,15 @@ namespace BovineLabs.Timeline.Data
 
         public bool Equals(TimeTransform other)
         {
-            return this.start == other.start && this.end == other.end && this.clipIn == other.clipIn && this.scale == other.scale;
+            return this.Start == other.Start && this.End == other.End && this.ClipIn == other.ClipIn && this.Scale == other.Scale;
         }
 
         public override int GetHashCode()
         {
-            return math.rol(this.start.GetHashCode(), 1) +
-                math.rol(this.end.GetHashCode(), 7) +
-                math.rol(this.clipIn.GetHashCode(), 12) +
-                math.rol(this.scale.GetHashCode(), 18);
+            return math.rol(this.Start.GetHashCode(), 1) +
+                math.rol(this.End.GetHashCode(), 7) +
+                math.rol(this.ClipIn.GetHashCode(), 12) +
+                math.rol(this.Scale.GetHashCode(), 18);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// <copyright file="TrackBindingComponent.cs" company="BovineLabs">
+﻿// <copyright file="TrackBinding.cs" company="BovineLabs">
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
