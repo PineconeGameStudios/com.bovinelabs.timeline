@@ -27,6 +27,8 @@ namespace BovineLabs.Timeline.Authoring
         /// <summary> The target object being converted. This is the top most gameObject with a PlayableDirector component. </summary>
         public Entity Target;
 
+        public Entity TrackEntity;
+
         /// <summary> The current playable director being converted. For the top most director, this is the PlayableDirector. </summary>
         public PlayableDirector? Director;
 
@@ -48,6 +50,7 @@ namespace BovineLabs.Timeline.Authoring
             this.Timer = timer;
             this.Target = target;
             this.Director = director;
+            this.TrackEntity = default;
             this.Binding = null;
             this.Clip = null;
             this.Track = null;
@@ -176,54 +179,6 @@ namespace BovineLabs.Timeline.Authoring
             return newContext;
         }
 
-        public static Entity CreateTrackEntity(this BakingContext context)
-        {
-            if (context.Track == null || context.Timer == Entity.Null || context.Binding == null)
-            {
-                throw new ArgumentException("Track Entities require a track, a timer and a tag");
-            }
-
-            var linked = CreateEntity(context, context.Track.name);
-            context.AddActive(linked);
-
-            context.Baker.AddComponent(linked, new TrackBinding { Value = context.Binding.Target });
-            context.SharedContextValues.BindingToClip.Add((context.Binding, linked));
-            // context.Baker.AddComponent(linked, new ActiveRange
-            // {
-            //     Start = DiscreteTime.MinValue,
-            //     End = DiscreteTime.MaxValue,
-            // });
-
-            context.Baker.AddComponent<TimerData>(linked);
-            context.SharedContextValues.TimeDataEntities.Add(linked);
-
-            return linked;
-        }
-
-        /// <summary> Create an entity representing a timeline clip. </summary>
-        public static Entity CreateClipEntity(this BakingContext context)
-        {
-            if (context.Clip == null)
-            {
-                throw new ArgumentException("context.Clip cannot be null");
-            }
-
-            var name = $"{context.Clip.displayName} (ClipEntity)";
-
-            var entity = CreateEntity(context, name);
-            ClipBaker.AddClipBaseComponents(context, entity, context.Clip);
-            ClipBaker.AddExtrapolationComponents(context, entity, context.Clip);
-            ClipBaker.AddMixCurvesComponents(context, entity, context.Clip);
-
-            if (context.Binding != null)
-            {
-                context.Baker.AddComponent(entity, new TrackBinding { Value = context.Binding.Target });
-                context.SharedContextValues.BindingToClip.Add((context.Binding, entity));
-            }
-
-            return entity;
-        }
-
         public static Binding GetBinding(this BakingContext context, DOTSTrack track, Object? trackBinding)
         {
             var entity = Entity.Null;
@@ -248,6 +203,56 @@ namespace BovineLabs.Timeline.Authoring
 
             context.Baker.AddComponent<TimelineActivePrevious>(entity);
             context.Baker.SetComponentEnabled<TimelineActivePrevious>(entity, false);
+        }
+
+        internal static Entity CreateTrackEntity(this BakingContext context)
+        {
+            // TODO DISABLED 0251025
+            if (context.Track == null || context.Timer == Entity.Null || context.Binding == null)
+            {
+                throw new ArgumentException("Track Entities require a track, a timer and a tag");
+            }
+
+            var linked = CreateEntity(context, context.Track.name);
+            context.AddActive(linked);
+            context.Baker.AddComponent(linked, new TrackBinding { Value = context.Binding.Target });
+            context.SharedContextValues.BindingToClip.Add((context.Binding, linked));
+
+            // TODO unsure
+            // context.Baker.AddComponent(linked, new ActiveRange
+            // {
+            //     Start = DiscreteTime.MinValue,
+            //     End = DiscreteTime.MaxValue,
+            // });
+
+            // TODO DISABLED 0251025
+            context.Baker.AddComponent<TimerData>(linked);
+            context.SharedContextValues.TimeDataEntities.Add(linked);
+            return linked;
+        }
+
+        /// <summary> Create an entity representing a timeline clip. </summary>
+        internal static Entity CreateClipEntity(this BakingContext context)
+        {
+            if (context.Clip == null)
+            {
+                throw new ArgumentException("context.Clip cannot be null");
+            }
+
+            var name = $"{context.Clip.displayName} (ClipEntity)";
+
+            var entity = CreateEntity(context, name);
+            ClipBaker.AddClipBaseComponents(context, entity, context.Clip);
+            ClipBaker.AddExtrapolationComponents(context, entity, context.Clip);
+            ClipBaker.AddMixCurvesComponents(context, entity, context.Clip);
+
+            if (context.Binding != null)
+            {
+                context.Baker.AddComponent(entity, new TrackBinding { Value = context.Binding.Target });
+                context.SharedContextValues.BindingToClip.Add((context.Binding, entity));
+            }
+
+            return entity;
         }
     }
 }

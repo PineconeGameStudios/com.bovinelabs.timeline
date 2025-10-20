@@ -50,7 +50,7 @@ namespace BovineLabs.Timeline.Data
             return time >= DiscreteTime.Zero && time <= length;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is TimeTransform transform && this.Equals(transform);
         }

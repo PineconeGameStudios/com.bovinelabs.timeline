@@ -26,11 +26,14 @@ namespace BovineLabs.Timeline
                 ExtrapolationPingPongType = SystemAPI.GetComponentTypeHandle<ExtrapolationPingPong>(true),
                 ExtrapolationHoldType = SystemAPI.GetComponentTypeHandle<ExtrapolationHold>(true),
             }.ScheduleParallel(state.Dependency);
+
+            state.Dependency = new ResetOnTimelineDeactivatedJob().ScheduleParallel(state.Dependency);
         }
 
-        [WithAll(typeof(TimelineActive))]
-        [WithChangeFilter(typeof(TimerData))]
         [BurstCompile]
+        [WithAll(typeof(TimelineActive))]
+        [WithPresent(typeof(ClipActive))]
+        [WithChangeFilter(typeof(TimerData))]
         private unsafe partial struct LocalTimeJob : IJobEntity, IJobEntityChunkBeginEnd
         {
             [ReadOnly]
@@ -64,9 +67,10 @@ namespace BovineLabs.Timeline
             {
             }
 
-            private void Execute([EntityIndexInQuery] int entityIndexInQuery, ref LocalTime localTime, in TimerData timerData, in TimeTransform timeTransform)
+            private void Execute([EntityIndexInQuery] int entityIndexInQuery, ref LocalTime localTime, in TimerData timerData, in TimeTransform timeTransform,
+                EnabledRefRW<ClipActive> clipActive)
             {
-                UpdateLocalTime(ref localTime, timerData, timeTransform);
+                localTime.Value = timeTransform.ToLocalTimeUnbound(timerData.Time);
 
                 if (this.loops != null)
                 {
@@ -83,17 +87,7 @@ namespace BovineLabs.Timeline
                     UpdateHold(ref localTime, timerData, timeTransform, this.holds[entityIndexInQuery]);
                 }
 
-                CheckBounded(ref localTime, timeTransform);
-            }
-
-            private static void UpdateLocalTime(ref LocalTime localTime, in TimerData timerData, in TimeTransform timeTransform)
-            {
-                localTime.Value = timeTransform.ToLocalTimeUnbound(timerData.Time);
-            }
-
-            private static void CheckBounded(ref LocalTime localTime, in TimeTransform timeTransform)
-            {
-                localTime.IsActive = timeTransform.IsLocalTimeBounded(localTime.Value);
+                clipActive.ValueRW = timeTransform.IsLocalTimeBounded(localTime.Value);
             }
 
             private static void UpdateLoop(
@@ -152,6 +146,16 @@ namespace BovineLabs.Timeline
                 {
                     localTime.Value = ((timeTransform.End - timeTransform.Start) * timeTransform.Scale) + timeTransform.ClipIn;
                 }
+            }
+        }
+
+        // If we deactivate the timeline then LocalTimeJob won't update so we just need to reset ClipActive as well
+        [WithDisabled(typeof(TimelineActive))]
+        private partial struct ResetOnTimelineDeactivatedJob : IJobEntity
+        {
+            private void Execute(EnabledRefRW<ClipActive> clipActive)
+            {
+                clipActive.ValueRW = false;
             }
         }
     }

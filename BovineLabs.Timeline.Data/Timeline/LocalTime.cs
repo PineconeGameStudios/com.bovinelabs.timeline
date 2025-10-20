@@ -11,6 +11,5 @@ namespace BovineLabs.Timeline.Data
     public struct LocalTime : IComponentData
     {
         public DiscreteTime Value;
-        public bool IsActive;
     }
 }

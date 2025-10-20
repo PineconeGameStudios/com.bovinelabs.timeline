@@ -21,7 +21,7 @@ namespace BovineLabs.Timeline.Authoring
         /// </summary>
         /// <param name="context"> The current context. </param>
         /// <returns> The clip entity or Entity.Null when baking not required. </returns>
-        public virtual Entity CreateClipEntity(BakingContext context)
+        public Entity CreateClipEntity(BakingContext context)
         {
             return context.CreateClipEntity();
         }

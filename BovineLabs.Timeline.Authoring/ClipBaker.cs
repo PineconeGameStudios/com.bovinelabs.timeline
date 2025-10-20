@@ -4,6 +4,7 @@
 
 namespace BovineLabs.Timeline.Authoring
 {
+    using BovineLabs.Core.Authoring;
     using BovineLabs.Core.Collections;
     using BovineLabs.Timeline.Data;
     using BovineLabs.Timeline.Data.Schedular;
@@ -19,10 +20,13 @@ namespace BovineLabs.Timeline.Authoring
 
             context.AddActive(clipEntity);
 
+            context.Baker.AddComponent(clipEntity, new Clip { Track = context.TrackEntity });
             context.Baker.AddComponent<TimerData>(clipEntity);
             context.Baker.AddComponent(clipEntity, clip.GetTimeTransform());
             context.Baker.AddComponent(clipEntity, clip.GetActiveRange());
             context.Baker.AddComponent(clipEntity, new LocalTime { Value = DiscreteTime.Zero });
+            context.Baker.AddEnabledComponent<ClipActive>(clipEntity, false);
+            context.Baker.AddEnabledComponent<ClipActivePrevious>(clipEntity, false);
 
             if ((clip.clipCaps & ClipCaps.Blending) != 0)
             {

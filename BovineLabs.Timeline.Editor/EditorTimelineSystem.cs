@@ -14,8 +14,7 @@ namespace BovineLabs.Timeline.Editor
     using UnityEngine;
 
     [WorldSystemFilter(WorldSystemFilterFlags.Editor)]
-    [UpdateBefore(typeof(TimerUpdateSystem))]
-    [UpdateInGroup(typeof(ScheduleSystemGroup))]
+    [UpdateInGroup(typeof(TimelineSystemGroup), OrderFirst = true)]
     public partial class EditorTimelineSystem : SystemBase
     {
         private NativeHashSet<Entity> toDisable;
@@ -35,6 +34,10 @@ namespace BovineLabs.Timeline.Editor
         /// <inheritdoc />
         protected override void OnUpdate()
         {
+            // force reset for editor world
+            var missingReset = SystemAPI.QueryBuilder().WithNone<TrackResetOnDeactivate>().WithAll<Track>().Build();
+            this.EntityManager.AddComponent<TrackResetOnDeactivate>(missingReset);
+
             var isActiveQuery = SystemAPI.QueryBuilder().WithAll<Timer, ClockData, TimelineActive>().Build();
 
             this.DisableUnselected();
@@ -57,6 +60,15 @@ namespace BovineLabs.Timeline.Editor
                 {
                     this.EntityManager.SetComponentEnabled<TimelineActive>(it.Current, false);
                 }
+
+                if (this.EntityManager.HasComponent<Timer>(it.Current))
+                {
+                    this.EntityManager.SetComponentData(it.Current, new Timer
+                    {
+                        Time = new DiscreteTime(0),
+                        TimeScale = 1,
+                    });
+                }
             }
 
             this.toDisable.Clear();
@@ -69,11 +81,11 @@ namespace BovineLabs.Timeline.Editor
             foreach (var e in isActiveQuery.ToEntityArray(this.WorldUpdateAllocator))
             {
                 this.toDisable.Add(e);
-                this.EntityManager.SetComponentData(e, new Timer
-                {
-                    Time = new DiscreteTime(0),
-                    TimeScale = 1,
-                });
+                // this.EntityManager.SetComponentData(e, new Timer
+                // {
+                //     Time = new DiscreteTime(0),
+                //     TimeScale = 1,
+                // });
             }
         }
 
@@ -91,22 +103,30 @@ namespace BovineLabs.Timeline.Editor
 
                 var director = w.state.masterSequence.director;
 
+                if (director.time >= director.duration || director.time <= 0)
+                {
+                    // If outside window, allow it to remain disabled
+                    continue;
+                }
+
                 this.EntityManager.Debug.GetEntitiesForAuthoringObject(director, entities);
 
                 foreach (var e in entities)
                 {
-                    if (mask.MatchesIgnoreFilter(e))
+                    if (!mask.MatchesIgnoreFilter(e))
                     {
-                        this.EntityManager.SetComponentEnabled<TimelineActive>(e, true);
-                        this.EntityManager.SetComponentData(e, new Timer
-                        {
-                            Time = new DiscreteTime(director.time),
-                            TimeScale = 1,
-                        });
-
-                        this.toDisable.Remove(e);
-                        break;
+                        continue;
                     }
+
+                    this.EntityManager.SetComponentEnabled<TimelineActive>(e, true);
+                    this.EntityManager.SetComponentData(e, new Timer
+                    {
+                        Time = new DiscreteTime(director.time),
+                        TimeScale = 1,
+                    });
+
+                    this.toDisable.Remove(e);
+                    break;
                 }
             }
         }

@@ -100,7 +100,7 @@ namespace BovineLabs.Timeline.Authoring
         /// </summary>
         /// <param name="clip"> The TimelineClip including Loops </param>
         /// <param name="activeRange"> The active range to check. If this is larger than the timelines range, it is checked for loops </param>
-        /// <returns> </returns>
+        /// <returns> True if the clip was within range</returns>
         public static bool InRangeInclLoops(this TimelineClip clip, ActiveRange activeRange)
         {
             var clipRange = clip.GetActiveRange();

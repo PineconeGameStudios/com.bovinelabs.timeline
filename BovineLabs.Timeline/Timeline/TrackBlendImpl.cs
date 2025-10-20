@@ -37,12 +37,14 @@ namespace BovineLabs.Timeline
             this.unblendedQuery = new EntityQueryBuilder(Allocator.Temp)
                 .WithAllRW<TC>()
                 .WithAll<TimelineActive, TrackBinding, LocalTime>()
+                .WithAll<ClipActive>()
                 .WithNone<ClipWeight>()
                 .Build(ref state);
 
             this.blendedQuery = new EntityQueryBuilder(Allocator.Temp)
                 .WithAllRW<TC>()
                 .WithAll<TimelineActive, TrackBinding, LocalTime, ClipWeight>()
+                .WithAll<ClipActive>()
                 .Build(ref state);
 
             this.animatedHandle = state.GetComponentTypeHandle<TC>();
@@ -75,7 +77,7 @@ namespace BovineLabs.Timeline
             this.clipWeightHandle.Update(ref state);
 
             resizeJob.BlendData = this.blendResults;
-            resizeJob.UnblendedCount = this.unblendedQuery.CalculateEntityCountWithoutFiltering();
+            resizeJob.UnblendedCount = this.unblendedQuery.CalculateEntityCountWithoutFiltering(); // TODO use filtering?
             resizeJob.BlendedCount = this.blendedQuery.CalculateEntityCountWithoutFiltering();
 
             animateUnblendedJob.BlendData = this.blendResults.AsParallelWriter();
@@ -139,14 +141,8 @@ namespace BovineLabs.Timeline
                     ref var animated = ref animateds[entityIndexInChunk];
                     ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
                     ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                    this.Execute(ref animated, trackBinding, localTime);
+                    JobHelpers.AnimateUnblend<T, TB, TC>(trackBinding, localTime, ref animated, this.BlendData);
                 }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private void Execute(ref TC animated, in TrackBinding binding, in LocalTime localTime)
-            {
-                JobHelpers.AnimateUnblendExecuteGeneric<T, TB, TC>(binding, localTime, ref animated, this.BlendData);
             }
         }
 
@@ -181,13 +177,9 @@ namespace BovineLabs.Timeline
                     ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
                     ref readonly var localTime = ref localTimes[entityIndexInChunk];
                     ref readonly var clipWeight = ref clipWeights[entityIndexInChunk];
-                    this.Execute(ref animated, in trackBinding, in localTime, in clipWeight);
-                }
-            }
 
-            private void Execute(ref TC animated, in TrackBinding binding, in LocalTime localTime, in ClipWeight clip)
-            {
-                JobHelpers.AccumulateWeightedAnimationExecuteGeneric<T, TB, TC>(binding, localTime, ref animated, clip, this.BlendData);
+                    JobHelpers.AccumulateWeighted<T, TB, TC>(trackBinding, localTime, ref animated, clipWeight, this.BlendData);
+                }
             }
         }
     }
