@@ -136,7 +136,7 @@ namespace BovineLabs.Timeline.Authoring
             var cachedTimeDataEntities = context.SharedContextValues.TimeDataEntities.ToArray();
             context.SharedContextValues.TimeDataEntities.Clear();
 
-            ConvertTracks(context, timeline.GetDOTSTracks(), range);
+            ConvertTracks(context, timeline.GetDOTSTracks(context.Baker), range);
 
             var links = context.Baker.AddBuffer<TimerDataLink>(entity);
             foreach (var e in context.SharedContextValues.TimeDataEntities)

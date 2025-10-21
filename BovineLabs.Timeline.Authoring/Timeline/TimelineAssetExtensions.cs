@@ -7,12 +7,30 @@ namespace BovineLabs.Timeline.Authoring
     using System.Collections.Generic;
     using System.Linq;
     using BovineLabs.Timeline.Data.Schedular;
+    using Unity.Entities;
     using Unity.IntegerTime;
     using UnityEngine.Timeline;
 
     public static class TimelineAssetExtensions
     {
         /// <summary> Get all the DOTS-compatible tracks from a timeline </summary>
+        public static IEnumerable<DOTSTrack> GetDOTSTracks(this TimelineAsset asset, IBaker baker)
+        {
+            if (asset == null)
+            {
+                yield break;
+            }
+
+            foreach (var track in asset.GetOutputTracks().OfType<DOTSTrack>())
+            {
+                baker.DependsOn(track);
+                if (!track.mutedInHierarchy)
+                {
+                    yield return track;
+                }
+            }
+        }
+
         public static IEnumerable<DOTSTrack> GetDOTSTracks(this TimelineAsset asset)
         {
             if (asset == null)
@@ -20,8 +38,9 @@ namespace BovineLabs.Timeline.Authoring
                 return Enumerable.Empty<DOTSTrack>();
             }
 
-            return asset.GetOutputTracks().OfType<DOTSTrack>().Where(x => !x.mutedInHierarchy).ToList();
+            return asset.GetOutputTracks().OfType<DOTSTrack>();
         }
+
 
         /// <summary> Get the active range of the timeline asset. </summary>
         public static ActiveRange GetRange(this TimelineAsset asset)

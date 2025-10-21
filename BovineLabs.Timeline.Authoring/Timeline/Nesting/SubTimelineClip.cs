@@ -38,7 +38,7 @@ namespace BovineLabs.Timeline.Authoring
                 var newContext = context.CreateCompositeTimer();
                 newContext.Director = null;
 
-                foreach (var track in this.Timeline.GetDOTSTracks())
+                foreach (var track in this.Timeline.GetDOTSTracks(context.Baker))
                 {
                     newContext.Track = track;
                     newContext.Clip = null;
