@@ -239,9 +239,7 @@ namespace BovineLabs.Timeline.Authoring
                 throw new ArgumentException("context.Clip cannot be null");
             }
 
-            var name = $"{context.Clip.displayName} (ClipEntity)";
-
-            var entity = CreateEntity(context, name);
+            var entity = CreateEntity(context, "context.Clip.displayName");
             ClipBaker.AddClipBaseComponents(context, entity, context.Clip);
             ClipBaker.AddExtrapolationComponents(context, entity, context.Clip);
             ClipBaker.AddMixCurvesComponents(context, entity, context.Clip);
