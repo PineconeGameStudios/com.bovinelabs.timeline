@@ -17,20 +17,6 @@ namespace BovineLabs.Timeline.Editor
     [UpdateInGroup(typeof(TimelineSystemGroup), OrderFirst = true)]
     public partial class EditorTimelineSystem : SystemBase
     {
-        private NativeHashSet<Entity> toDisable;
-
-        /// <inheritdoc />
-        protected override void OnCreate()
-        {
-            this.toDisable = new NativeHashSet<Entity>(1, Allocator.Persistent);
-        }
-
-        /// <inheritdoc />
-        protected override void OnDestroy()
-        {
-            this.toDisable.Dispose();
-        }
-
         /// <inheritdoc />
         protected override void OnUpdate()
         {
@@ -38,9 +24,8 @@ namespace BovineLabs.Timeline.Editor
             var missingReset = SystemAPI.QueryBuilder().WithNone<TrackResetOnDeactivate>().WithAll<Track>().Build();
             this.EntityManager.AddComponent<TrackResetOnDeactivate>(missingReset);
 
-            var isActiveQuery = SystemAPI.QueryBuilder().WithAll<Timer, ClockData, TimelineActive>().Build();
+            var isActiveQuery = SystemAPI.QueryBuilder().WithAll<Timer, TimelineActive>().Build();
 
-            this.DisableUnselected();
             this.ResetActive(isActiveQuery);
             this.EnableSelected(isActiveQuery);
         }
@@ -50,28 +35,14 @@ namespace BovineLabs.Timeline.Editor
             return Resources.FindObjectsOfTypeAll<TimelineWindow>();
         }
 
-        private void DisableUnselected()
+        private void Disable(Entity entity)
         {
-            using var it = this.toDisable.GetEnumerator();
-
-            while (it.MoveNext())
+            this.EntityManager.SetComponentEnabled<TimelineActive>(entity, false);
+            this.EntityManager.SetComponentData(entity, new Timer
             {
-                if (this.EntityManager.HasComponent<TimelineActive>(it.Current))
-                {
-                    this.EntityManager.SetComponentEnabled<TimelineActive>(it.Current, false);
-                }
-
-                if (this.EntityManager.HasComponent<Timer>(it.Current))
-                {
-                    this.EntityManager.SetComponentData(it.Current, new Timer
-                    {
-                        Time = new DiscreteTime(0),
-                        TimeScale = 1,
-                    });
-                }
-            }
-
-            this.toDisable.Clear();
+                Time = new DiscreteTime(0),
+                TimeScale = 1,
+            });
         }
 
         private void ResetActive(EntityQuery isActiveQuery)
@@ -80,12 +51,7 @@ namespace BovineLabs.Timeline.Editor
             // If something is selected the time here will just be overridden next
             foreach (var e in isActiveQuery.ToEntityArray(this.WorldUpdateAllocator))
             {
-                this.toDisable.Add(e);
-                // this.EntityManager.SetComponentData(e, new Timer
-                // {
-                //     Time = new DiscreteTime(0),
-                //     TimeScale = 1,
-                // });
+                this.Disable(e);
             }
         }
 
@@ -125,7 +91,6 @@ namespace BovineLabs.Timeline.Editor
                         TimeScale = 1,
                     });
 
-                    this.toDisable.Remove(e);
                     break;
                 }
             }
