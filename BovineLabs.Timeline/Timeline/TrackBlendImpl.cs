@@ -5,20 +5,16 @@
 namespace BovineLabs.Timeline
 {
     using System.Runtime.CompilerServices;
-    using BovineLabs.Core.Collections;
-    using BovineLabs.Core.Internal;
     using BovineLabs.Timeline.Data;
     using Unity.Burst;
     using Unity.Burst.Intrinsics;
     using Unity.Collections;
     using Unity.Entities;
     using Unity.Jobs;
-    using Unity.Mathematics;
 
-    public unsafe struct TrackBlendImpl<T, TB, TC>
+    public unsafe struct TrackBlendImpl<T, TC>
         where T : unmanaged
-        where TB : unmanaged, IBlobCurveSampler<T>
-        where TC : unmanaged, IAnimatedComponent<T, TB>
+        where TC : unmanaged, IAnimatedComponent<T>
     {
         private NativeParallelHashMap<Entity, MixData<T>> blendResults;
 
@@ -141,7 +137,7 @@ namespace BovineLabs.Timeline
                     ref var animated = ref animateds[entityIndexInChunk];
                     ref readonly var trackBinding = ref trackBindings[entityIndexInChunk];
                     ref readonly var localTime = ref localTimes[entityIndexInChunk];
-                    JobHelpers.AnimateUnblend<T, TB, TC>(trackBinding, localTime, ref animated, this.BlendData);
+                    JobHelpers.AnimateUnblend<T, TC>(trackBinding, ref animated, this.BlendData);
                 }
             }
         }
@@ -178,7 +174,7 @@ namespace BovineLabs.Timeline
                     ref readonly var localTime = ref localTimes[entityIndexInChunk];
                     ref readonly var clipWeight = ref clipWeights[entityIndexInChunk];
 
-                    JobHelpers.AccumulateWeighted<T, TB, TC>(trackBinding, localTime, ref animated, clipWeight, this.BlendData);
+                    JobHelpers.AccumulateWeighted<T, TC>(trackBinding, ref animated, clipWeight, this.BlendData);
                 }
             }
         }

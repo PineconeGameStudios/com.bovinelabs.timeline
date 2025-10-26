@@ -4,7 +4,6 @@
 
 namespace BovineLabs.Timeline
 {
-    using BovineLabs.Core.Collections;
     using BovineLabs.Timeline.Data;
     using Unity.Collections;
     using Unity.Entities;
@@ -12,17 +11,12 @@ namespace BovineLabs.Timeline
 
     public static class JobHelpers
     {
-        public static void AnimateUnblend<T, TB, TC>(
-            in TrackBinding binding, in LocalTime localTime, ref TC animatedComponent, NativeParallelHashMap<Entity, MixData<T>>.ParallelWriter blendData)
+        public static void AnimateUnblend<T, TC>(
+            in TrackBinding binding, ref TC animatedComponent, NativeParallelHashMap<Entity, MixData<T>>.ParallelWriter blendData)
             where T : unmanaged
-            where TB : unmanaged, IBlobCurveSampler<T>
-            where TC : unmanaged, IAnimatedComponent<T, TB>
+            where TC : unmanaged, IAnimatedComponent<T>
         {
             var v = animatedComponent.DefaultValue;
-            if (animatedComponent.AnimationData.IsCreated)
-            {
-                v = animatedComponent.AnimationData.Evaluate((float)localTime.Value);
-            }
 
             var mixData = new MixData<T>
             {
@@ -33,18 +27,12 @@ namespace BovineLabs.Timeline
             blendData.TryAdd(binding.Value, mixData);
         }
 
-        public static void AccumulateWeighted<T, TB, TC>(
-            in TrackBinding binding, in LocalTime localTime, ref TC animatedComponent, in ClipWeight c3, NativeParallelHashMap<Entity, MixData<T>> blendData)
+        public static void AccumulateWeighted<T, TC>(
+            in TrackBinding binding, ref TC animatedComponent, in ClipWeight c3, NativeParallelHashMap<Entity, MixData<T>> blendData)
             where T : unmanaged
-            where TB : unmanaged, IBlobCurveSampler<T>
-            where TC : unmanaged, IAnimatedComponent<T, TB>
+            where TC : unmanaged, IAnimatedComponent<T>
         {
             var v = animatedComponent.DefaultValue;
-
-            if (animatedComponent.AnimationData.IsCreated)
-            {
-                v = animatedComponent.AnimationData.Evaluate((float)localTime.Value);
-            }
 
             if (!blendData.TryGetValue(binding.Value, out var data))
             {
