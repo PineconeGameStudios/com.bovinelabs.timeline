@@ -13,6 +13,11 @@ namespace BovineLabs.Timeline
     using Unity.Entities;
     using Unity.IntegerTime;
 
+    /// <summary>
+    /// System that calculates the local time for each clip based on timer data and time transforms.
+    /// Handles clip extrapolation (loop, ping-pong, hold) and determines clip active state.
+    /// Updates the ClipActive enableable component based on whether the clip's local time is within bounds.
+    /// </summary>
     [UpdateInGroup(typeof(TimelineUpdateSystemGroup))]
     public partial struct ClipLocalTimeSystem : ISystem
     {

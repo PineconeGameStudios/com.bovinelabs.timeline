@@ -16,7 +16,7 @@ namespace BovineLabs.Timeline
             where T : unmanaged
             where TC : unmanaged, IAnimatedComponent<T>
         {
-            var v = animatedComponent.DefaultValue;
+            var v = animatedComponent.Value;
 
             var mixData = new MixData<T>
             {
@@ -32,7 +32,7 @@ namespace BovineLabs.Timeline
             where T : unmanaged
             where TC : unmanaged, IAnimatedComponent<T>
         {
-            var v = animatedComponent.DefaultValue;
+            var v = animatedComponent.Value;
 
             if (!blendData.TryGetValue(binding.Value, out var data))
             {

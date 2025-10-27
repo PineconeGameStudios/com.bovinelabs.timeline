@@ -11,7 +11,10 @@ namespace BovineLabs.Timeline
     using Unity.Collections;
     using Unity.Entities;
 
-    [UpdateInGroup(typeof(TimelineUpdateSystemGroup), OrderFirst = true)]
+    /// <summary>
+    /// System that copies the current ClipActive state to ClipActivePrevious. This allows detecting clip activation and deactivation events.
+    /// </summary>
+    [UpdateInGroup(typeof(TimelineSystemGroup), OrderLast = true)]
     public partial struct ClipActivePreviousSystem : ISystem
     {
         /// <inheritdoc />

@@ -11,7 +11,7 @@ namespace BovineLabs.Timeline.Data
     public interface IAnimatedComponent<out T> : IComponentData
         where T : unmanaged
     {
-        /// <summary> Gets the default value to use when the component is not being animated. </summary>
-        T DefaultValue { get; }
+        /// <summary> Gets the value to use when the component is not being animated. </summary>
+        T Value { get; }
     }
 }

@@ -8,6 +8,11 @@ namespace BovineLabs.Timeline
     using Unity.Burst;
     using Unity.Entities;
 
+    /// <summary>
+    /// System that calculates the weight of timeline clips based on their local time.
+    /// Updates after ClipLocalTimeSystem to use the calculated local time.
+    /// Evaluates animation curves to determine clip blending weights.
+    /// </summary>
     [UpdateInGroup(typeof(TimelineUpdateSystemGroup))]
     [UpdateAfter(typeof(ClipLocalTimeSystem))]
     public partial struct ClipWeightSystem : ISystem
@@ -19,6 +24,9 @@ namespace BovineLabs.Timeline
             new AnimatedClipWeightJob().ScheduleParallel();
         }
 
+        /// <summary>
+        /// Job that evaluates clip weight based on animated curves.
+        /// </summary>
         [BurstCompile]
         private partial struct AnimatedClipWeightJob : IJobEntity
         {

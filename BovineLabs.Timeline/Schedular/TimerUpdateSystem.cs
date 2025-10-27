@@ -13,6 +13,12 @@ namespace BovineLabs.Timeline.Schedular
     using Unity.Entities;
     using Unity.IntegerTime;
 
+    /// <summary>
+    /// System that updates all timers based on their clock data.
+    /// Handles timer initialization when timelines become active, updates running timers,
+    /// and manages timer pausing and stopping. Also updates composite timers that are
+    /// derived from parent timers with custom scaling and offsets.
+    /// </summary>
     [UpdateInGroup(typeof(ScheduleSystemGroup))]
     public partial struct TimerUpdateSystem : ISystem
     {
