@@ -10,7 +10,6 @@ namespace BovineLabs.Timeline.Data.Schedular
     /// <summary>
     /// Component that uses a fixed delta time
     /// </summary>
-    [WriteGroup(typeof(ClockData))]
     public struct ClockTypeConstant : IComponentData
     {
         /// <summary> The delta time to advance each frame. </summary>

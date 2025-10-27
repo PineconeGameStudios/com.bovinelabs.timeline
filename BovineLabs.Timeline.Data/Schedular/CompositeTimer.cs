@@ -10,7 +10,6 @@ namespace BovineLabs.Timeline.Data.Schedular
     /// <summary>
     /// Composite timer is a Timer whose time is a transformation from a non-Composite timer
     /// </summary>
-    [WriteGroup(typeof(ClockData))]
     public struct CompositeTimer : IComponentData
     {
         /// <summary> The timer this is a transformation of. </summary>
