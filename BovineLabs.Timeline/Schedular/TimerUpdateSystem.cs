@@ -4,7 +4,6 @@
 
 namespace BovineLabs.Timeline.Schedular
 {
-    using BovineLabs.Core.Extensions;
     using BovineLabs.Timeline.Data;
     using BovineLabs.Timeline.Data.Schedular;
     using Unity.Burst;
@@ -17,22 +16,6 @@ namespace BovineLabs.Timeline.Schedular
     [UpdateInGroup(typeof(ScheduleSystemGroup))]
     public partial struct TimerUpdateSystem : ISystem
     {
-        private EntityQuery stoppedQuery;
-
-        /// <inheritdoc />
-        [BurstCompile]
-        public void OnCreate(ref SystemState state)
-        {
-            this.stoppedQuery = SystemAPI
-                .QueryBuilder()
-                .WithAll<TimelineActivePrevious, TimerDataLink>()
-                .WithDisabled<TimelineActive>()
-                .WithPresent<TimerPaused>()
-                .Build();
-
-            this.stoppedQuery.SetChangedVersionFilter(ComponentType.ReadWrite<TimelineActive>());
-        }
-
         /// <inheritdoc />
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
@@ -54,17 +37,23 @@ namespace BovineLabs.Timeline.Schedular
                 Timers = SystemAPI.GetComponentLookup<Timer>(),
             }.ScheduleParallel(state.Dependency);
 
+            var stoppedQuery = SystemAPI
+                .QueryBuilder()
+                .WithAll<TimelineActivePrevious, TimerDataLink>()
+                .WithDisabled<TimelineActive>()
+                .WithPresent<TimerPaused>()
+                .Build();
+
             state.Dependency = new TimerStoppedJob
             {
                 TimerDataLinks = SystemAPI.GetBufferTypeHandle<TimerDataLink>(true),
                 TimerPausedHandle = SystemAPI.GetComponentTypeHandle<TimerPaused>(),
                 Actives = SystemAPI.GetComponentLookup<TimelineActive>(),
-            }.ScheduleParallel(this.stoppedQuery, state.Dependency);
+            }.ScheduleParallel(stoppedQuery, state.Dependency);
         }
 
         [WithAll(typeof(TimelineActive))]
         [WithDisabled(typeof(TimelineActivePrevious))]
-        [WithChangeFilter(typeof(TimelineActive))]
         [BurstCompile]
         private partial struct TimerStartedJob : IJobEntity
         {
@@ -157,7 +146,7 @@ namespace BovineLabs.Timeline.Schedular
                 Entity entity, ref Timer timer, ref TimerRange timerRange, in ClockData clockData, in DynamicBuffer<TimerDataLink> timerDataLinks)
             {
                 var timerPaused = this.TimerPauseds.GetEnabledRefRW<TimerPaused>(entity);
-                var active = this.Actives.GetEnableRefRWNoChangeFilter(entity);
+                var active = this.Actives.GetEnabledRefRW<TimelineActive>(entity);
 
                 var previousTime = timer.Time;
 
@@ -167,10 +156,7 @@ namespace BovineLabs.Timeline.Schedular
 
                 if (!timerPaused.ValueRO)
                 {
-                    if (TimerRangeImpl.ApplyTimerRange(ref timer, ref timerRange, previousTime, timerPaused, active))
-                    {
-                        this.Actives.SetChangeFilter(entity);
-                    }
+                    TimerRangeImpl.ApplyTimerRange(ref timer, ref timerRange, previousTime, timerPaused, active);
                 }
 
                 var source = new TimerData
@@ -206,11 +192,10 @@ namespace BovineLabs.Timeline.Schedular
                     timer.TimeScale = source.TimeScale * composite.Scale;
 
                     var active = source.Time >= composite.ActiveRange.Start && source.Time < composite.ActiveRange.End;
-                    var activeRW = this.Actives.GetEnableRefRWNoChangeFilter(compLink.Value);
+                    var activeRW = this.Actives.GetEnabledRefRW<TimelineActive>(compLink.Value);
                     if (active != activeRW.ValueRO)
                     {
                         activeRW.ValueRW = active;
-                        this.Actives.SetChangeFilter(compLink.Value);
 
                         // Enable or disable everything
                         if (active)
@@ -238,15 +223,6 @@ namespace BovineLabs.Timeline.Schedular
 
                     this.Update(compLink.Value, newSource, newLinks);
                 }
-            }
-        }
-
-        [BurstCompile]
-        [WithAll(typeof(TimelineActive), typeof(TimelineActivePrevious))]
-        private partial struct TimerCompositeUpdateJob : IJobEntity
-        {
-            private void Execute()
-            {
             }
         }
     }

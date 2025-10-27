@@ -11,32 +11,24 @@ namespace BovineLabs.Timeline.Schedular
 
     public static class TimerRangeImpl
     {
-        public static bool ApplyTimerRange(
+        public static void ApplyTimerRange(
             ref Timer timer, ref TimerRange range, DiscreteTime previousTime, EnabledRefRW<TimerPaused> timerPauseds, EnabledRefRW<TimelineActive> actives)
         {
             switch (range.Behaviour)
             {
                 case RangeBehaviour.AutoStop:
-                    if (ApplyAutoStop(ref timer, ref range, previousTime, actives))
-                    {
-                        return true;
-                    }
-
+                    ApplyAutoStop(ref timer, ref range, previousTime, actives);
                     break;
                 case RangeBehaviour.AutoPause:
                     ApplyAutoPause(ref timer, ref range, timerPauseds);
-
                     break;
                 case RangeBehaviour.Loop:
                     ApplyLoop(ref timer, ref range);
-
                     break;
             }
-
-            return false;
         }
 
-        private static bool ApplyAutoStop(ref Timer timer, ref TimerRange range, DiscreteTime previousTime, EnabledRefRW<TimelineActive> actives)
+        private static void ApplyAutoStop(ref Timer timer, ref TimerRange range, DiscreteTime previousTime, EnabledRefRW<TimelineActive> actives)
         {
             timer.Time = timer.Time.Max(range.Range.Start);
             if (timer.Time >= range.Range.End)
@@ -49,13 +41,8 @@ namespace BovineLabs.Timeline.Schedular
                 {
                     timer.Time = range.Range.Start;
                     actives.ValueRW = false;
-
-                    return true;
-                    // state.TimerStateFlags |= TimerStateFlags.Completed;
                 }
             }
-
-            return false;
         }
 
         private static void ApplyAutoPause(ref Timer timer, ref TimerRange clamp, EnabledRefRW<TimerPaused> timerPauseds)

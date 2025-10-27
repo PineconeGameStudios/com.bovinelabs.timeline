@@ -7,6 +7,7 @@ namespace BovineLabs.Timeline.Authoring
     using Unity.Entities;
     using UnityEngine;
     using UnityEngine.Playables;
+    using UnityEngine.Timeline;
 
     public abstract class DOTSClip : PlayableAsset
     {
