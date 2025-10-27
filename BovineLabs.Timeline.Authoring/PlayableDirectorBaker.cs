@@ -137,6 +137,29 @@ namespace BovineLabs.Timeline.Authoring
             ConvertTimeline(context, timeline, range);
         }
 
+        /// <summary>
+        /// Converts a single track and its clips into DOTS entities.
+        /// </summary>
+        /// <param name="context">The baking context containing the track to convert.</param>
+        /// <param name="range">The active time range to convert.</param>
+        /// <exception cref="ArgumentException">Thrown when context.Track is not a valid DOTS track.</exception>
+        public static void ConvertTrack(BakingContext context, ActiveRange range)
+        {
+            var track = context.Track as DOTSTrack;
+            if (track == null)
+            {
+                throw new ArgumentException("context.Track must be a valid DOTS track");
+            }
+
+            context.Baker.DependsOn(track);
+            foreach (var clip in track.GetClips())
+            {
+                context.Baker.DependsOn(clip.asset);
+            }
+
+            track.BakeTrack(context, range);
+        }
+
         private static void ConvertTimeline(BakingContext context, TimelineAsset timeline, ActiveRange range)
         {
             context.Baker.DependsOn(timeline);
@@ -178,29 +201,6 @@ namespace BovineLabs.Timeline.Authoring
 
                 ConvertTrack(trackContext, range);
             }
-        }
-
-        /// <summary>
-        /// Converts a single track and its clips into DOTS entities.
-        /// </summary>
-        /// <param name="context">The baking context containing the track to convert.</param>
-        /// <param name="range">The active time range to convert.</param>
-        /// <exception cref="ArgumentException">Thrown when context.Track is not a valid DOTS track.</exception>
-        public static void ConvertTrack(BakingContext context, ActiveRange range)
-        {
-            var track = context.Track as DOTSTrack;
-            if (track == null)
-            {
-                throw new ArgumentException("context.Track must be a valid DOTS track");
-            }
-
-            context.Baker.DependsOn(track);
-            foreach (var clip in track.GetClips())
-            {
-                context.Baker.DependsOn(clip.asset);
-            }
-
-            track.BakeTrack(context, range);
         }
     }
 }
