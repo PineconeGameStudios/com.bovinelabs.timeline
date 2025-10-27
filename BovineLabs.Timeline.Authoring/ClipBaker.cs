@@ -12,8 +12,18 @@ namespace BovineLabs.Timeline.Authoring
     using Unity.IntegerTime;
     using UnityEngine.Timeline;
 
+    /// <summary>
+    /// Utility class for baking Unity Timeline clips into DOTS entities with the appropriate components.
+    /// </summary>
     public static class ClipBaker
     {
+        /// <summary>
+        /// Adds the base components required for all timeline clips to function in DOTS.
+        /// This includes timing, transform, active state, and optional blending components.
+        /// </summary>
+        /// <param name="context">The baking context.</param>
+        /// <param name="clipEntity">The entity representing the clip.</param>
+        /// <param name="clip">The source timeline clip.</param>
         public static void AddClipBaseComponents(BakingContext context, Entity clipEntity, TimelineClip clip)
         {
             context.SharedContextValues.TimeDataEntities.Add(clipEntity);
@@ -34,12 +44,19 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
+        /// <summary>
+        /// Adds extrapolation components for clips that have pre or post extrapolation enabled.
+        /// Extrapolation determines how a clip behaves before its start time or after its end time.
+        /// </summary>
+        /// <param name="context">The baking context.</param>
+        /// <param name="clipEntity">The entity representing the clip.</param>
+        /// <param name="clip">The source timeline clip.</param>
         public static void AddExtrapolationComponents(BakingContext context, Entity clipEntity, TimelineClip clip)
         {
             if (clip.hasPreExtrapolation || clip.hasPostExtrapolation)
             {
                 // 'Continue' is default behaviour, so it has no component
-                //      it is valid for one component to have multiple, one on pre, one on post
+                // It is valid for one clip to have multiple extrapolation types, one on pre, one on post
                 var options = GetExtrapolationOptions(clip, TimelineClip.ClipExtrapolation.Hold);
                 if (options != ExtrapolationPosition.None)
                 {
@@ -69,6 +86,13 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
+        /// <summary>
+        /// Adds animated weight components for clips that have blend curves (mix in/out).
+        /// This handles the smooth blending of clips when they overlap.
+        /// </summary>
+        /// <param name="context">The baking context.</param>
+        /// <param name="clipEntity">The entity representing the clip.</param>
+        /// <param name="clip">The source timeline clip.</param>
         public static void AddMixCurvesComponents(BakingContext context, Entity clipEntity, TimelineClip clip)
         {
             var dotsClip = clip.asset as DOTSClip;

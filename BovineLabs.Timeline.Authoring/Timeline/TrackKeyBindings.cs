@@ -10,22 +10,21 @@ namespace BovineLabs.Timeline.Authoring
     using UnityEngine.Timeline;
     using Object = UnityEngine.Object;
 
-    /// <summary> Serializable Track/Target Bindings. </summary>
+    /// <summary>
+    /// Serializable container for track-to-target bindings in sub-timelines.
+    /// Used to store and manage which Unity objects are bound to which tracks.
+    /// </summary>
     [Serializable]
     public struct TrackKeyBindings
     {
-        /// <summary> Track->Tag pairs </summary>
-        [Serializable]
-        public struct TrackKeyPair
-        {
-            public TrackAsset Track;
-            public Object Target;
-        }
-
-        /// <summary> The list of bindings. </summary>
+        /// <summary> The list of track-to-target bindings. </summary>
         public List<TrackKeyPair> Bindings;
 
-        /// <summary> Sync the track list to the given Timeline </summary>
+        /// <summary>
+        /// Synchronizes the binding list with the given timeline asset's tracks.
+        /// Adds new tracks and removes tracks that no longer exist in the timeline.
+        /// </summary>
+        /// <param name="timeline">The timeline asset to synchronize with.</param>
         public void SyncToTimeline(TimelineAsset timeline)
         {
             this.Bindings ??= new List<TrackKeyPair>();
@@ -61,7 +60,11 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
-        /// <summary> Given a track, find the corresponding tag. </summary>
+        /// <summary>
+        /// Finds the target object bound to the specified track.
+        /// </summary>
+        /// <param name="asset">The track asset to find the binding for.</param>
+        /// <returns>The bound object, or null if no binding exists for the track.</returns>
         public Object? FindObject(TrackAsset? asset)
         {
             if (asset == null || this.Bindings == null)
@@ -71,6 +74,19 @@ namespace BovineLabs.Timeline.Authoring
 
             var index = this.Bindings.FindIndex(x => x.Track == asset);
             return index >= 0 ? this.Bindings[index].Target : null;
+        }
+
+        /// <summary>
+        /// Represents a binding between a timeline track and its target object.
+        /// </summary>
+        [Serializable]
+        public struct TrackKeyPair
+        {
+            /// <summary> The timeline track asset. </summary>
+            public TrackAsset Track;
+
+            /// <summary> The Unity object bound to this track (typically a GameObject or Component). </summary>
+            public Object Target;
         }
     }
 }

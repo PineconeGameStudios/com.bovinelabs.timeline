@@ -11,9 +11,18 @@ namespace BovineLabs.Timeline.Authoring
     using Unity.IntegerTime;
     using UnityEngine.Timeline;
 
+    /// <summary>
+    /// Extension methods for Unity's TimelineAsset to support DOTS baking operations.
+    /// </summary>
     public static class TimelineAssetExtensions
     {
-        /// <summary> Get all the DOTS-compatible tracks from a timeline </summary>
+        /// <summary>
+        /// Gets all DOTS-compatible tracks from a timeline asset, excluding muted tracks.
+        /// Registers dependencies with the baker for each track.
+        /// </summary>
+        /// <param name="asset">The timeline asset to get tracks from.</param>
+        /// <param name="baker">The baker to register dependencies with.</param>
+        /// <returns>An enumerable of DOTS tracks.</returns>
         public static IEnumerable<DOTSTrack> GetDOTSTracks(this TimelineAsset asset, IBaker baker)
         {
             if (asset == null)
@@ -31,6 +40,11 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
+        /// <summary>
+        /// Gets all DOTS-compatible tracks from a timeline asset, excluding muted tracks.
+        /// </summary>
+        /// <param name="asset">The timeline asset to get tracks from.</param>
+        /// <returns>An enumerable of DOTS tracks.</returns>
         public static IEnumerable<DOTSTrack> GetDOTSTracks(this TimelineAsset asset)
         {
             if (asset == null)
@@ -41,8 +55,11 @@ namespace BovineLabs.Timeline.Authoring
             return asset.GetOutputTracks().OfType<DOTSTrack>();
         }
 
-
-        /// <summary> Get the active range of the timeline asset. </summary>
+        /// <summary>
+        /// Gets the active time range of the timeline asset from start to duration.
+        /// </summary>
+        /// <param name="asset">The timeline asset.</param>
+        /// <returns>An active range representing the full timeline duration.</returns>
         public static ActiveRange GetRange(this TimelineAsset asset)
         {
             return new ActiveRange

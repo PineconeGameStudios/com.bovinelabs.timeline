@@ -14,6 +14,10 @@ namespace BovineLabs.Timeline.Authoring
     using UnityEngine.Playables;
     using UnityEngine.Timeline;
 
+    /// <summary>
+    /// Baker for converting Unity Timeline PlayableDirector components to ECS entities with DOTS Timeline components.
+    /// This baker handles the conversion of timeline assets, tracks, and clips into their ECS equivalents.
+    /// </summary>
     public class PlayableDirectorBaker : Baker<PlayableDirector>
     {
         /// <inheritdoc />
@@ -29,7 +33,7 @@ namespace BovineLabs.Timeline.Authoring
             {
                 Time = new DiscreteTime(director.initialTime),
                 TimeScale = 1,
-            }); // TODO initial time isn't actually used
+            });
 
             this.AddComponent<TimerPaused>(entity);
             this.SetComponentEnabled<TimerPaused>(entity, false);
@@ -83,7 +87,7 @@ namespace BovineLabs.Timeline.Authoring
 
                     break;
                 case DirectorWrapMode.None:
-                    // @TODO, make the sample last frame optional
+                    // SampleLastFrame is enabled to ensure the final frame is evaluated before stopping
                     this.AddComponent(entity, new TimerRange
                     {
                         Behaviour = RangeBehaviour.AutoStop,
@@ -111,6 +115,12 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
+        /// <summary>
+        /// Converts a PlayableDirector and its associated timeline asset into DOTS entities.
+        /// </summary>
+        /// <param name="context">The baking context containing the director to convert.</param>
+        /// <param name="range">The active time range to convert.</param>
+        /// <exception cref="ArgumentException">Thrown when context.Director is null.</exception>
         public static void ConvertPlayableDirector(BakingContext context, ActiveRange range)
         {
             if (context.Director == null)
@@ -170,6 +180,12 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
+        /// <summary>
+        /// Converts a single track and its clips into DOTS entities.
+        /// </summary>
+        /// <param name="context">The baking context containing the track to convert.</param>
+        /// <param name="range">The active time range to convert.</param>
+        /// <exception cref="ArgumentException">Thrown when context.Track is not a valid DOTS track.</exception>
         public static void ConvertTrack(BakingContext context, ActiveRange range)
         {
             var track = context.Track as DOTSTrack;

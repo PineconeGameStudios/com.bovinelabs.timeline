@@ -10,24 +10,25 @@ namespace BovineLabs.Timeline.Authoring
     using UnityEngine.Playables;
     using UnityEngine.Timeline;
 
+    /// <summary>
+    /// A clip that references and embeds another PlayableDirector's timeline into the current timeline.
+    /// This enables nested timeline hierarchies where one timeline can trigger and control another.
+    /// </summary>
     [Serializable]
     public class SubDirectorClip : DOTSClip, ITimelineClipAsset, IPropertyPreview
     {
         /// <summary> The sub timeline as a playable director. </summary>
         public ExposedReference<PlayableDirector> SubDirector;
 
-        // /// <summary> Optional reference to a 'take' in the nested timeline. </summary>
-        // public EditTrack Take;
-
-        /// <summary> The default duration of the timeline. This is set in the editor based on the length of the timeline assigned. </summary>
+        /// <summary> The default duration of the clip based on the referenced timeline's duration. This is set in the editor. </summary>
         [HideInInspector]
         public double DefaultClipDuration = TimelineClip.kDefaultClipDurationInSeconds;
 
         /// <inheritdoc />
-        public ClipCaps clipCaps => ClipCaps.ClipIn | ClipCaps.SpeedMultiplier; /*| ClipCaps.Looping;*/
+        public ClipCaps clipCaps => ClipCaps.ClipIn | ClipCaps.SpeedMultiplier;
 
-        /// <summary> Gets this is the default duration of the clip used by the UI. </summary>
-        public override double duration => /*Take != null ? Take.RemappedDuration : */this.DefaultClipDuration;
+        /// <summary> Gets the default duration of the clip used by the UI, based on the referenced timeline. </summary>
+        public override double duration => this.DefaultClipDuration;
 
         /// <inheritdoc />
         public override void Bake(Entity clipEntity, BakingContext context)
@@ -42,9 +43,6 @@ namespace BovineLabs.Timeline.Authoring
                 context = context.CreateCompositeTimer();
                 context.Director = player;
 
-                // if (Take != null)
-                // Take.ConvertEdits(context, context.Clip.GetSubTimelineRange());
-                // else
                 PlayableDirectorBaker.ConvertPlayableDirector(context, context.Clip!.GetSubTimelineRange());
 
                 context.SharedContextValues.CompositeLinkEntities.Clear();
@@ -53,7 +51,11 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
-        /// <summary> Propagate any gather calls on to the Sub-Timeline. </summary>
+        /// <summary>
+        /// Propagates property gathering calls to the nested sub-timeline for preview purposes.
+        /// </summary>
+        /// <param name="director">The director playing this clip.</param>
+        /// <param name="driver">The property collector to gather properties into.</param>
         public void GatherProperties(PlayableDirector director, IPropertyCollector driver)
         {
             if (director == null)
@@ -72,8 +74,13 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
-        /// <summary> Overrides the playable creation </summary>
-        /// <remarks> Needed to make the sub director in the window contain the correct time </remarks>
+        /// <summary>
+        /// Creates a playable that syncs time with the nested PlayableDirector.
+        /// </summary>
+        /// <param name="graph">The playable graph.</param>
+        /// <param name="go">The GameObject with the PlayableDirector component.</param>
+        /// <returns>A playable that manages time synchronization with the sub-director.</returns>
+        /// <remarks>Needed to ensure the sub director displays the correct time in the Timeline window.</remarks>
         public override Playable CreatePlayable(PlayableGraph graph, GameObject go)
         {
             var director = go.GetComponent<PlayableDirector>();
@@ -88,11 +95,16 @@ namespace BovineLabs.Timeline.Authoring
             return timeSync;
         }
 
-        // Behaviour used to set the time on the nested playable behaviour. This is required to have the nested timeline director report the correct time
+        /// <summary>
+        /// PlayableBehaviour that synchronizes the time between the parent timeline and nested director.
+        /// This ensures the nested timeline displays the correct time during playback.
+        /// </summary>
         private class TimeSyncBehaviour : PlayableBehaviour
         {
+            /// <summary> The nested PlayableDirector to synchronize time with. </summary>
             public PlayableDirector? Director;
 
+            /// <inheritdoc />
             public override void PrepareFrame(Playable playable, FrameData info)
             {
                 if (this.Director != null)

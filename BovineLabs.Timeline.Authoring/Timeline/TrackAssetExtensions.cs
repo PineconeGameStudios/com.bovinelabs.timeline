@@ -8,11 +8,16 @@ namespace BovineLabs.Timeline.Authoring
     using UnityEngine.Timeline;
 
     /// <summary>
-    /// Extension methods for TrackAssets
+    /// Extension methods for Unity's TrackAsset to support multi-layer track operations.
     /// </summary>
     public static class TrackAssetExtensions
     {
-        /// <summary> Get clips from all layers of a track, excluding any on muted tracks </summary>
+        /// <summary>
+        /// Gets all clips from all layers of a track, excluding clips on muted tracks.
+        /// This includes clips from the main track and all child tracks.
+        /// </summary>
+        /// <param name="asset">The track asset to get clips from.</param>
+        /// <returns>An enumerable of timeline clips from all active layers.</returns>
         public static IEnumerable<TimelineClip> GetActiveClipsFromAllLayers(this TrackAsset asset)
         {
             if (asset.muted)

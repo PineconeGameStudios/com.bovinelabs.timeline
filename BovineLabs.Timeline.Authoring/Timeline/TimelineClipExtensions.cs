@@ -12,9 +12,16 @@ namespace BovineLabs.Timeline.Authoring
     using UnityEngine;
     using UnityEngine.Timeline;
 
+    /// <summary>
+    /// Extension methods for Unity's TimelineClip to support DOTS timeline operations.
+    /// </summary>
     public static class TimelineClipExtensions
     {
-        /// <summary> Returns the start and end range for a TimelineClip as an ActiveRange. </summary>
+        /// <summary>
+        /// Gets the active time range for a timeline clip, including extrapolation.
+        /// </summary>
+        /// <param name="clip">The timeline clip to get the range from.</param>
+        /// <returns>An ActiveRange representing the clip's start and end times.</returns>
         public static ActiveRange GetActiveRange(this TimelineClip clip)
         {
             var activeRange = new ActiveRange
@@ -26,7 +33,11 @@ namespace BovineLabs.Timeline.Authoring
             return activeRange;
         }
 
-        /// <summary> Gets the parent to local time transform for a TimelineClip. </summary>
+        /// <summary>
+        /// Gets the time transform that converts parent timeline time to local clip time.
+        /// </summary>
+        /// <param name="clip">The timeline clip to get the transform from.</param>
+        /// <returns>A TimeTransform containing start, end, scale, and clip-in offset.</returns>
         public static TimeTransform GetTimeTransform(this TimelineClip clip)
         {
             return new TimeTransform
@@ -39,10 +50,11 @@ namespace BovineLabs.Timeline.Authoring
         }
 
         /// <summary>
-        /// Gets a single animation curve that represents the weighting curve of the entire clip
+        /// Creates a single animation curve that represents the blending curve of the entire clip.
+        /// Combines mix-in and mix-out curves into a unified weight curve in local time.
         /// </summary>
-        /// <param name="clip"> </param>
-        /// <returns> null if the TimelineClip does not have any blend or ease weights </returns>
+        /// <param name="clip">The timeline clip to create the weight curve from.</param>
+        /// <returns>An AnimationCurve representing the clip's weight over time, or null if the clip has no blend weights.</returns>
         public static AnimationCurve? CreateClipWeightCurve(this TimelineClip? clip)
         {
             if (clip == null)
@@ -96,11 +108,11 @@ namespace BovineLabs.Timeline.Authoring
         }
 
         /// <summary>
-        /// Checks if a timeline clip is within range, including loops of the timeline asset.
+        /// Checks if a timeline clip is within the specified range, accounting for timeline loops.
         /// </summary>
-        /// <param name="clip"> The TimelineClip including Loops </param>
-        /// <param name="activeRange"> The active range to check. If this is larger than the timelines range, it is checked for loops </param>
-        /// <returns> True if the clip was within range</returns>
+        /// <param name="clip">The timeline clip to check.</param>
+        /// <param name="activeRange">The active range to check against. If larger than the timeline's range, it accounts for loops.</param>
+        /// <returns>True if the clip is within the active range (including loops); otherwise, false.</returns>
         public static bool InRangeInclLoops(this TimelineClip clip, ActiveRange activeRange)
         {
             var clipRange = clip.GetActiveRange();
@@ -116,11 +128,13 @@ namespace BovineLabs.Timeline.Authoring
         }
 
         /// <summary>
-        /// Checks if a timeline clip is within range, including loops of the timeline asset.
+        /// Checks if a clip range is within the specified active range, accounting for timeline loops.
+        /// This is the static version that works with pre-calculated ranges.
         /// </summary>
-        /// <param name="clipRange"> The range of the TimelineClip including Loops </param>
-        /// <param name="activeRange"> The active range to check. If this is larger than the timelines range, it is checked for loops </param>
-        /// <returns> </returns>
+        /// <param name="clipRange">The time range of the clip.</param>
+        /// <param name="activeRange">The active range to check against. If larger than the timeline's range, it accounts for loops.</param>
+        /// <param name="timelineRange">The full range of the parent timeline asset.</param>
+        /// <returns>True if the clip range is within the active range (including loops); otherwise, false.</returns>
         public static bool InRangeInclLoops(ActiveRange clipRange, ActiveRange activeRange, ActiveRange timelineRange)
         {
             if (!activeRange.IsValid())
@@ -161,7 +175,12 @@ namespace BovineLabs.Timeline.Authoring
             return endRange.Overlaps(clipRange) || startRange.Overlaps(clipRange);
         }
 
-        /// <summary> Returns the active range of the subtimeline of this clip </summary>
+        /// <summary>
+        /// Gets the active time range of a nested sub-timeline referenced by this clip.
+        /// Converts the clip's extrapolated range to local timeline time.
+        /// </summary>
+        /// <param name="clip">The timeline clip containing a sub-timeline reference.</param>
+        /// <returns>An ActiveRange representing the portion of the sub-timeline to play.</returns>
         public static ActiveRange GetSubTimelineRange(this TimelineClip clip)
         {
             return new ActiveRange
