@@ -6,9 +6,10 @@ namespace BovineLabs.Timeline.Data
 {
     using Unity.Entities;
 
+    /// <summary> Component assigned to a Clip entity to reference its parent Track. </summary>
     public struct Clip : IComponentData
     {
-        // The track entity the clip belongs to
+        /// <summary> The track entity the clip belongs to. </summary>
         public Entity Track;
     }
 }

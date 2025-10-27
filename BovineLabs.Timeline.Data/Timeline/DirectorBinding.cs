@@ -11,7 +11,10 @@ namespace BovineLabs.Timeline.Data
     [InternalBufferCapacity(0)]
     public struct DirectorBinding : IBufferElementData
     {
+        /// <summary> The unique identifier for the track. </summary>
         public FixedString32Bytes TrackIdentifier;
+
+        /// <summary> The track entity associated with this binding. </summary>
         public Entity TrackEntity;
     }
 }

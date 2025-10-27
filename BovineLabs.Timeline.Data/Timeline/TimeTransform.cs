@@ -24,9 +24,16 @@ namespace BovineLabs.Timeline.Data
     /// <summary> The transformation from the timer to the local clip space. </summary>
     public struct TimeTransform : IComponentData
     {
+        /// <summary> The start time of the clip in the timeline. </summary>
         public DiscreteTime Start;
+
+        /// <summary> The end time of the clip in the timeline. </summary>
         public DiscreteTime End;
+
+        /// <summary> The local start time within the clip. </summary>
         public DiscreteTime ClipIn;
+
+        /// <summary> The time scale multiplier for the clip. </summary>
         public double Scale;
 
         public static bool operator ==(TimeTransform options1, TimeTransform options2)

@@ -10,6 +10,7 @@ namespace BovineLabs.Timeline.Data
     /// <summary> The local time of the clip entity. </summary>
     public struct LocalTime : IComponentData
     {
+        /// <summary> The current local time value. </summary>
         public DiscreteTime Value;
     }
 }

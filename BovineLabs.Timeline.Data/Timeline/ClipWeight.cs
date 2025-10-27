@@ -10,15 +10,14 @@ namespace BovineLabs.Timeline.Data
     /// <summary> The current assigned weight of a clip. </summary>
     public struct ClipWeight : IComponentData
     {
+        /// <summary> The weight value, typically between 0 and 1. </summary>
         public float Value;
     }
 
-    /// <summary>
-    /// Animation Curve for the assigned weight
-    /// </summary>
+    /// <summary> Animation curve for the assigned weight of a clip. </summary>
     public struct AnimatedClipWeight : IComponentData
     {
+        /// <summary> The blob curve sampler used to evaluate weight over time. </summary>
         public BlobCurveSampler Value;
-        // public BlobAssetReference<BlobCurve> Value;
     }
 }
