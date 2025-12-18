@@ -4,6 +4,7 @@
 
 namespace BovineLabs.Timeline.Schedular
 {
+    using BovineLabs.Core;
     using BovineLabs.Timeline.Data;
     using BovineLabs.Timeline.Data.Schedular;
     using Unity.Burst;
@@ -16,7 +17,7 @@ namespace BovineLabs.Timeline.Schedular
     /// Copies from ClockTypeXXX Component types to ClockData
     /// ClockData is used by the timer system to update timers
     /// </summary>
-    [WorldSystemFilter(WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation)]
+    [WorldSystemFilter(WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation | Worlds.Menu)]
     [UpdateBefore(typeof(TimerUpdateSystem))]
     [UpdateInGroup(typeof(ScheduleSystemGroup))]
     public partial struct ClockUpdateSystem : ISystem
