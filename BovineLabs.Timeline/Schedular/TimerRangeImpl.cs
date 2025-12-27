@@ -9,8 +9,19 @@ namespace BovineLabs.Timeline.Schedular
     using Unity.Entities;
     using Unity.IntegerTime;
 
+    /// <summary>
+    /// Helper methods for applying timer range behavior.
+    /// </summary>
     public static class TimerRangeImpl
     {
+        /// <summary>
+        /// Applies the configured range behavior to the timer.
+        /// </summary>
+        /// <param name="timer">The timer to update.</param>
+        /// <param name="range">The range settings to apply.</param>
+        /// <param name="previousTime">The previous timer time, used for sampling behavior.</param>
+        /// <param name="timerPauseds">The timer paused enableable reference.</param>
+        /// <param name="actives">The timeline active enableable reference.</param>
         public static void ApplyTimerRange(
             ref Timer timer, ref TimerRange range, DiscreteTime previousTime, EnabledRefRW<TimerPaused> timerPauseds, EnabledRefRW<TimelineActive> actives)
         {

@@ -12,6 +12,11 @@ namespace BovineLabs.Timeline
     using Unity.Entities;
     using Unity.Jobs;
 
+    /// <summary>
+    /// Helper that schedules clip blending jobs for a specific animated component type.
+    /// </summary>
+    /// <typeparam name="T">The value type being blended.</typeparam>
+    /// <typeparam name="TC">The animated component type.</typeparam>
     public unsafe struct TrackBlendImpl<T, TC>
         where T : unmanaged
         where TC : unmanaged, IAnimatedComponent<T>
@@ -26,6 +31,10 @@ namespace BovineLabs.Timeline
         private ComponentTypeHandle<LocalTime> localTimeHandle;
         private ComponentTypeHandle<ClipWeight> clipWeightHandle;
 
+        /// <summary>
+        /// Initializes internal queries and state.
+        /// </summary>
+        /// <param name="state">The system state.</param>
         public void OnCreate(ref SystemState state)
         {
             this.blendResults = new NativeParallelHashMap<Entity, MixData<T>>(64, Allocator.Persistent);
@@ -49,6 +58,10 @@ namespace BovineLabs.Timeline
             this.clipWeightHandle = state.GetComponentTypeHandle<ClipWeight>(true);
         }
 
+        /// <summary>
+        /// Disposes of internal allocations.
+        /// </summary>
+        /// <param name="state">The system state.</param>
         public void OnDestroy(ref SystemState state)
         {
             this.blendResults.Dispose();
@@ -95,13 +108,21 @@ namespace BovineLabs.Timeline
         }
 
         [BurstCompile]
+        /// <summary>
+        /// Job that resizes and clears the blend data map.
+        /// </summary>
         public struct ResizeJob : IJob
         {
+            /// <summary>The map used to store blend results.</summary>
             public NativeParallelHashMap<Entity, MixData<T>> BlendData;
 
+            /// <summary>The number of unblended entities.</summary>
             public int UnblendedCount;
+
+            /// <summary>The number of blended entities.</summary>
             public int BlendedCount;
 
+            /// <inheritdoc />
             public void Execute()
             {
                 this.BlendData.Clear();
@@ -113,18 +134,26 @@ namespace BovineLabs.Timeline
         }
 
         [BurstCompile]
+        /// <summary>
+        /// Job that writes unblended values for clips without weights.
+        /// </summary>
         public struct AnimateUnblendedJob : IJobChunk
         {
+            /// <summary>The blend data map to update.</summary>
             public NativeParallelHashMap<Entity, MixData<T>>.ParallelWriter BlendData;
 
+            /// <summary>The animated component handle.</summary>
             public ComponentTypeHandle<TC> AnimatedHandle;
 
             [ReadOnly]
+            /// <summary>The track binding handle.</summary>
             public ComponentTypeHandle<TrackBinding> TrackBindingHandle;
 
             [ReadOnly]
+            /// <summary>The local time handle.</summary>
             public ComponentTypeHandle<LocalTime> LocalTimeHandle;
 
+            /// <inheritdoc />
             public void Execute(in ArchetypeChunk chunk, int chunkIndexInQuery, bool useEnabledMask, in v128 chunkEnabledMask)
             {
                 var animateds = (TC*)chunk.GetRequiredComponentDataPtrRW(ref this.AnimatedHandle);
@@ -143,22 +172,31 @@ namespace BovineLabs.Timeline
         }
 
         [BurstCompile]
+        /// <summary>
+        /// Job that accumulates weighted clip values.
+        /// </summary>
         public struct AccumulateWeightedAnimationJob : IJobChunk
         {
+            /// <summary>The blend data map to update.</summary>
             public NativeParallelHashMap<Entity, MixData<T>> BlendData;
 
+            /// <summary>The animated component handle.</summary>
             public ComponentTypeHandle<TC> AnimatedHandle;
 
             [ReadOnly]
+            /// <summary>The track binding handle.</summary>
             public ComponentTypeHandle<TrackBinding> TrackBindingHandle;
 
             [ReadOnly]
+            /// <summary>The local time handle.</summary>
             public ComponentTypeHandle<LocalTime> LocalTimeHandle;
 
             [ReadOnly]
+            /// <summary>The clip weight handle.</summary>
             public ComponentTypeHandle<ClipWeight> ClipWeightHandle;
 
             [CompilerGenerated]
+            /// <inheritdoc />
             public void Execute(in ArchetypeChunk chunk, int chunkIndexInQuery, bool useEnabledMask, in v128 chunkEnabledMask)
             {
                 var animateds = (TC*)chunk.GetRequiredComponentDataPtrRW(ref this.AnimatedHandle);

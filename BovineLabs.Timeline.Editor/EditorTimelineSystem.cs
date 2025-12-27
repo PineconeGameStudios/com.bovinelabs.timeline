@@ -6,13 +6,15 @@ namespace BovineLabs.Timeline.Editor
 {
     using BovineLabs.Timeline.Data;
     using BovineLabs.Timeline.Data.Schedular;
-    using BovineLabs.Timeline.Schedular;
     using Unity.Collections;
     using Unity.Entities;
     using Unity.IntegerTime;
     using UnityEditor.Timeline;
     using UnityEngine;
 
+    /// <summary>
+    /// Editor-only system that synchronizes timeline playback state with Timeline window selection.
+    /// </summary>
     [WorldSystemFilter(WorldSystemFilterFlags.Editor)]
     [UpdateInGroup(typeof(TimelineSystemGroup), OrderFirst = true)]
     public partial class EditorTimelineSystem : SystemBase
