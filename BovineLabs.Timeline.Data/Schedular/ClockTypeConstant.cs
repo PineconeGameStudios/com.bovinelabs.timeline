@@ -8,14 +8,14 @@ namespace BovineLabs.Timeline.Data.Schedular
     using Unity.IntegerTime;
 
     /// <summary>
-    /// Component that uses a fixed delta time
+    /// Component that uses a fixed delta time.
     /// </summary>
     public struct ClockTypeConstant : IComponentData
     {
-        /// <summary> The delta time to advance each frame. </summary>
+        /// <summary>The delta time to advance each frame.</summary>
         public DiscreteTime DeltaTime;
 
-        ///<summary> The timescale to pass to the timer. </summary>
+        /// <summary>The timescale to pass to the timer.</summary>
         public double TimeScale;
     }
 }
