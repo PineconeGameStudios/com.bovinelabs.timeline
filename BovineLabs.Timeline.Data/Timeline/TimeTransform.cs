@@ -17,10 +17,13 @@ namespace BovineLabs.Timeline.Data
     {
         /// <summary>No extrapolation.</summary>
         None = 0,
+
         /// <summary>Apply extrapolation before the clip range.</summary>
         Pre = 1,
+
         /// <summary>Apply extrapolation after the clip range.</summary>
         Post = 2,
+
         /// <summary>Apply extrapolation before and after the clip range.</summary>
         Both = Pre | Post,
     }

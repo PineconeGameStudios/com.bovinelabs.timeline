@@ -18,8 +18,8 @@ Loosely based on the original official package from https://docs.unity3d.com/Pac
 ## Installation
 
 ### Requirements
-- BovineLabs Core: 1.3.6 or newer
-  - Available at https://gitlab.com/tertle/com.bovinelabs.core or via OpenUPM: https://openupm.com/packages/com.bovinelabs.core/
+- BovineLabs Core: 1.5.0 or newer
+  - Available at https://gitlab.com/tertle/com.bovinelabs.core
 
 ### Sample
 A comprehensive sample is included via the Unity Package Manager showing basic timeline usage and custom track implementation.

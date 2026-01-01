@@ -6,7 +6,7 @@
   "displayName": "BovineLabs Timeline",
   "dependencies": {
     "com.bovinelabs.core": "1.5.1",
-    "com.unity.timeline": "1.8.6"
+    "com.unity.timeline": "1.8.10"
   },
   "keywords": [
     "DOTS",
