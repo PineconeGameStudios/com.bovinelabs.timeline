@@ -1,4 +1,4 @@
-﻿// <copyright file="DirectorBinding.cs" company="BovineLabs">
+// <copyright file="DirectorBinding.cs" company="BovineLabs">
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
@@ -12,7 +12,7 @@ namespace BovineLabs.Timeline.Data
     public struct DirectorBinding : IBufferElementData
     {
         /// <summary> The unique identifier for the track. </summary>
-        public FixedString64Bytes TrackIdentifier;
+        public FixedString128Bytes TrackIdentifier;
 
         /// <summary> The track entity associated with this binding. </summary>
         public Entity TrackEntity;
