@@ -93,6 +93,7 @@ namespace BovineLabs.Timeline.Authoring
 
                     break;
                 case DirectorWrapMode.None:
+                default:
                     // SampleLastFrame is enabled to ensure the final frame is evaluated before stopping
                     this.AddComponent(entity, new TimerRange
                     {

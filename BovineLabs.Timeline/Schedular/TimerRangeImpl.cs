@@ -132,7 +132,7 @@ namespace BovineLabs.Timeline.Schedular
                 else
                 {
                     var deltaTicks = range.Range.Duration.Value;
-                    var timeTicks = timer.Time.Value - range.Range.Start.Value; ;
+                    var timeTicks = timer.Time.Value - range.Range.Start.Value;
                     range.LoopCount += (uint)(timeTicks / deltaTicks);
                     timer.Time = DiscreteTime.FromTicks(range.Range.Start.Value + (timeTicks % deltaTicks));
                 }
