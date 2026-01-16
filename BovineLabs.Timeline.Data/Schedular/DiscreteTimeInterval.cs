@@ -85,14 +85,6 @@ namespace BovineLabs.Timeline.Data.Schedular
             return this.End.Min(this.Start.Max(time));
         }
 
-        /// <summary>Returns true if the interval is equal to the given object.</summary>
-        /// <param name="o">The object to compare.</param>
-        /// <returns>True if equal; otherwise, false.</returns>
-        public override bool Equals(object o)
-        {
-            return this.Equals((DiscreteTimeInterval)o);
-        }
-
         /// <summary>Returns true if the same range is represented.</summary>
         /// <param name="other">The interval to compare.</param>
         /// <returns>True if the intervals are equal; otherwise, false.</returns>
