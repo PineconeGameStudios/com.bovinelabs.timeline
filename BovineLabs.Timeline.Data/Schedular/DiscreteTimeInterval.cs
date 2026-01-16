@@ -62,7 +62,7 @@ namespace BovineLabs.Timeline.Data.Schedular
         /// <param name="t">The time to test.</param>
         /// <returns>True if the time is within the interval; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Contains(DiscreteTime t)
+        public readonly bool Contains(DiscreteTime t)
         {
             return t >= this.Start && t <= this.End;
         }
@@ -71,7 +71,7 @@ namespace BovineLabs.Timeline.Data.Schedular
         /// <param name="other">The other interval to test.</param>
         /// <returns>True if the intervals overlap; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Overlaps(DiscreteTimeInterval other)
+        public readonly bool Overlaps(DiscreteTimeInterval other)
         {
             return this.Start <= other.End && other.Start <= this.End;
         }
@@ -80,7 +80,7 @@ namespace BovineLabs.Timeline.Data.Schedular
         /// <param name="time">The time to clamp.</param>
         /// <returns>The clamped time.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public DiscreteTime Clamp(DiscreteTime time)
+        public readonly DiscreteTime Clamp(DiscreteTime time)
         {
             return this.End.Min(this.Start.Max(time));
         }

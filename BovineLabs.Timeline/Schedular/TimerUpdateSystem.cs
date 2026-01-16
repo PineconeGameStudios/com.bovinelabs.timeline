@@ -1,4 +1,4 @@
-﻿// <copyright file="TimerUpdateSystem.cs" company="BovineLabs">
+// <copyright file="TimerUpdateSystem.cs" company="BovineLabs">
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
@@ -31,6 +31,8 @@ namespace BovineLabs.Timeline.Schedular
                 TimerDatas = SystemAPI.GetComponentLookup<TimerData>(),
                 Actives = SystemAPI.GetComponentLookup<TimelineActive>(),
             }.ScheduleParallel(state.Dependency);
+
+
 
             state.Dependency = new TimersUpdateJob
             {
@@ -69,12 +71,15 @@ namespace BovineLabs.Timeline.Schedular
             [NativeDisableParallelForRestriction]
             public ComponentLookup<TimelineActive> Actives;
 
-            private void Execute(ref Timer timer, in ClockData clockData, in DynamicBuffer<TimerDataLink> timerDataLinks)
+            private void Execute(ref Timer timer, ref TimerRange timerRange, in ClockSettings clockSettings, in ClockData clockData,
+                in DynamicBuffer<TimerDataLink> timerDataLinks)
             {
                 timer.DeltaTime = DiscreteTime.Zero;
                 timer.TimeScale = clockData.Scale;
-                timer.Time = DiscreteTime.Zero;
+                timer.Time = clockSettings.Reverse ? timerRange.Range.End : DiscreteTime.Zero;
+
                 // TODO this doesn't seem to factor in initialize time
+
 
                 foreach (var link in timerDataLinks.AsNativeArray())
                 {
@@ -149,7 +154,8 @@ namespace BovineLabs.Timeline.Schedular
             public ComponentLookup<Timer> Timers;
 
             private void Execute(
-                Entity entity, ref Timer timer, ref TimerRange timerRange, in ClockData clockData, in DynamicBuffer<TimerDataLink> timerDataLinks)
+                Entity entity, ref Timer timer, ref TimerRange timerRange, in ClockSettings clockSettings, in ClockData clockData,
+                in DynamicBuffer<TimerDataLink> timerDataLinks)
             {
                 var timerPaused = this.TimerPauseds.GetEnabledRefRW<TimerPaused>(entity);
                 var active = this.Actives.GetEnabledRefRW<TimelineActive>(entity);
@@ -162,8 +168,9 @@ namespace BovineLabs.Timeline.Schedular
 
                 if (!timerPaused.ValueRO)
                 {
-                    TimerRangeImpl.ApplyTimerRange(ref timer, ref timerRange, previousTime, timerPaused, active);
+                    TimerRangeImpl.ApplyTimerRange(ref timer, ref timerRange, previousTime, timerPaused, active, clockSettings.Reverse);
                 }
+
 
                 var source = new TimerData
                 {

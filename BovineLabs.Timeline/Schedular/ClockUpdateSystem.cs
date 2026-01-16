@@ -1,4 +1,4 @@
-﻿// <copyright file="ClockUpdateSystem.cs" company="BovineLabs">
+// <copyright file="ClockUpdateSystem.cs" company="BovineLabs">
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
@@ -13,9 +13,9 @@ namespace BovineLabs.Timeline.Schedular
     using UnityEngine;
 
     /// <summary>
-    /// System that captures time update data from different clocks
-    /// Copies from ClockTypeXXX Component types to ClockData
-    /// ClockData is used by the timer system to update timers
+    /// System that captures time update data from different clocks.
+    /// Copies from <see cref="ClockSettings"/> to <see cref="ClockData"/>.
+    /// ClockData is used by the timer system to update timers.
     /// </summary>
     [WorldSystemFilter(WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation | Worlds.Menu)]
     [UpdateBefore(typeof(TimerUpdateSystem))]
@@ -26,57 +26,50 @@ namespace BovineLabs.Timeline.Schedular
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            new ClockGameTimeUpdateJob
+            new ClockUpdateJob
             {
                 GameTimeScale = Time.timeScale,
                 GameTimeDeltaTime = new DiscreteTime(SystemAPI.Time.DeltaTime),
-            }.ScheduleParallel();
-
-            new ClockUnscaledGameTimeUpdateJob
-            {
                 UnscaledGameTimeDeltaTime = new DiscreteTime(Time.unscaledDeltaTime),
             }.ScheduleParallel();
-
-            new ClockConstantTimeUpdateJob().ScheduleParallel();
         }
 
         [BurstCompile]
-        [WithAll(typeof(ClockTypeGameTime))]
         [WithAll(typeof(TimelineActive))]
-        private partial struct ClockGameTimeUpdateJob : IJobEntity
+        private partial struct ClockUpdateJob : IJobEntity
         {
             public DiscreteTime GameTimeDeltaTime;
+            public DiscreteTime UnscaledGameTimeDeltaTime;
             public double GameTimeScale;
 
-            private void Execute(ref ClockData clockData)
+            private void Execute(ref ClockData clockData, in ClockSettings clockSettings)
             {
-                clockData.DeltaTime = this.GameTimeDeltaTime;
-                clockData.Scale = this.GameTimeScale;
-            }
-        }
+                var deltaTime = DiscreteTime.Zero;
+                var timeScale = 1.0;
 
-        [BurstCompile]
-        [WithAll(typeof(ClockTypeUnscaledGameTime))]
-        [WithAll(typeof(TimelineActive))]
-        private partial struct ClockUnscaledGameTimeUpdateJob : IJobEntity
-        {
-            public DiscreteTime UnscaledGameTimeDeltaTime;
+                switch (clockSettings.UpdateMode)
+                {
+                    case ClockUpdateMode.GameTime:
+                        deltaTime = this.GameTimeDeltaTime;
+                        timeScale = this.GameTimeScale;
+                        break;
+                    case ClockUpdateMode.UnscaledGameTime:
+                        deltaTime = this.UnscaledGameTimeDeltaTime;
+                        timeScale = 1;
+                        break;
+                    case ClockUpdateMode.Constant:
+                        deltaTime = clockSettings.DeltaTime;
+                        timeScale = clockSettings.TimeScale;
+                        break;
+                }
 
-            private void Execute(ref ClockData clockData)
-            {
-                clockData.DeltaTime = this.UnscaledGameTimeDeltaTime;
-                clockData.Scale = 1;
-            }
-        }
+                if (clockSettings.Reverse)
+                {
+                    deltaTime = -deltaTime;
+                }
 
-        [BurstCompile]
-        [WithAll(typeof(TimelineActive))]
-        private partial struct ClockConstantTimeUpdateJob : IJobEntity
-        {
-            private static void Execute(ref ClockData clockData, in ClockTypeConstant constant)
-            {
-                clockData.DeltaTime = constant.DeltaTime;
-                clockData.Scale = constant.TimeScale;
+                clockData.DeltaTime = deltaTime;
+                clockData.Scale = timeScale;
             }
         }
     }
