@@ -1,4 +1,4 @@
-﻿// <copyright file="ConversionContext.cs" company="BovineLabs">
+// <copyright file="ConversionContext.cs" company="BovineLabs">
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
@@ -199,7 +199,7 @@ namespace BovineLabs.Timeline.Authoring
             var newContext = context;
             newContext.Timer = entity;
 
-            context.SharedContextValues.CompositeTimers.Add(context.Timer, composite);
+            context.SharedContextValues.CompositeTimers[entity] = composite;
 
             return newContext;
         }
