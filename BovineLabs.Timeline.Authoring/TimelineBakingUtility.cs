@@ -6,7 +6,6 @@ namespace BovineLabs.Timeline.Authoring
 {
     using BovineLabs.Timeline.Data;
     using UnityEditor;
-    using UnityEngine;
 
     /// <summary>
     /// Utility methods for timeline baking operations.
@@ -21,8 +20,6 @@ namespace BovineLabs.Timeline.Authoring
         public static TrackId TrackToIdentifier(DOTSTrack dotsTrack)
         {
             var goid = GlobalObjectId.GetGlobalObjectIdSlow(dotsTrack);
-
-            Debug.Log($"{goid.ToString()}");
 
             return new TrackId
             {
