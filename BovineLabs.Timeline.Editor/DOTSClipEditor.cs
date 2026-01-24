@@ -17,7 +17,7 @@ namespace BovineLabs.Timeline.Editor
     {
         private const string OverridePrefix = "override";
 
-        private readonly HashSet<string> overridePaths = new();
+        private readonly Dictionary<string, string> overrideToValuePaths = new();
         private readonly HashSet<string> valuePaths = new();
 
         protected override bool PreElementCreation(VisualElement root)
@@ -28,9 +28,9 @@ namespace BovineLabs.Timeline.Editor
 
         protected override VisualElement CreateElement(SerializedProperty property)
         {
-            if (this.overridePaths.Contains(property.propertyPath))
+            if (this.overrideToValuePaths.TryGetValue(property.propertyPath, out var valuePath))
             {
-                return new ToggleOption(this.serializedObject, property.propertyPath, GetValuePath(property));
+                return new ToggleOption(this.serializedObject, property.propertyPath, valuePath);
             }
 
             if (this.valuePaths.Contains(property.propertyPath))
@@ -43,7 +43,7 @@ namespace BovineLabs.Timeline.Editor
 
         private void CacheOverridePairs()
         {
-            this.overridePaths.Clear();
+            this.overrideToValuePaths.Clear();
             this.valuePaths.Clear();
 
             foreach (var property in SerializedHelper.IterateAllChildren(this.serializedObject, false))
@@ -53,46 +53,85 @@ namespace BovineLabs.Timeline.Editor
                     continue;
                 }
 
-                if (!property.name.StartsWith(OverridePrefix, StringComparison.Ordinal))
+                if (!this.TryGetValuePath(property, out var valuePath))
                 {
                     continue;
                 }
 
-                var valuePath = GetValuePath(property);
-                if (string.IsNullOrEmpty(valuePath))
-                {
-                    continue;
-                }
-
-                var valueProperty = this.serializedObject.FindProperty(valuePath);
-                if (valueProperty == null)
-                {
-                    continue;
-                }
-
-                this.overridePaths.Add(property.propertyPath);
+                this.overrideToValuePaths[property.propertyPath] = valuePath;
                 this.valuePaths.Add(valuePath);
             }
         }
 
-        private static string GetValuePath(SerializedProperty property)
+        private bool TryGetValuePath(SerializedProperty property, out string valuePath)
         {
-            if (property.name.Length <= OverridePrefix.Length)
+            valuePath = string.Empty;
+
+            var propertyName = property.name;
+            if (string.IsNullOrEmpty(propertyName))
             {
-                return string.Empty;
+                return false;
             }
 
-            var trimmed = property.name.Substring(OverridePrefix.Length);
-            var valueName = char.ToLowerInvariant(trimmed[0]) + trimmed.Substring(1);
+            var startIndex = 0;
+            var leading = string.Empty;
+            if (propertyName.StartsWith("m_", StringComparison.Ordinal))
+            {
+                leading = "m_";
+                startIndex = 2;
+            }
+            else if (propertyName.StartsWith("_", StringComparison.Ordinal))
+            {
+                leading = "_";
+                startIndex = 1;
+            }
+
+            if (propertyName.Length - startIndex <= OverridePrefix.Length)
+            {
+                return false;
+            }
+
+            var prefix = propertyName.Substring(startIndex, OverridePrefix.Length);
+            if (!prefix.Equals(OverridePrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            var trimmed = propertyName[(startIndex + OverridePrefix.Length)..];
+            if (trimmed.Length == 0)
+            {
+                return false;
+            }
+
+            var lowerName = char.ToLowerInvariant(trimmed[0]) + trimmed[1..];
+            var upperName = char.ToUpperInvariant(trimmed[0]) + trimmed[1..];
+
+            var preferUpper = char.IsUpper(prefix[0]);
+            var firstCandidate = preferUpper ? upperName : lowerName;
+            var secondCandidate = preferUpper ? lowerName : upperName;
 
             var path = property.propertyPath;
             var lastDot = path.LastIndexOf('.');
-            if (lastDot >= 0)
+            var basePath = lastDot >= 0 ? path[..(lastDot + 1)] : string.Empty;
+
+            var firstPath = basePath + leading + firstCandidate;
+            if (this.serializedObject.FindProperty(firstPath) != null)
             {
-                return path.Substring(0, lastDot + 1) + valueName;
+                valuePath = firstPath;
+                return true;
             }
 
-            return valueName;
+            if (!string.Equals(firstCandidate, secondCandidate, StringComparison.Ordinal))
+            {
+                var secondPath = basePath + leading + secondCandidate;
+                if (this.serializedObject.FindProperty(secondPath) != null)
+                {
+                    valuePath = secondPath;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
