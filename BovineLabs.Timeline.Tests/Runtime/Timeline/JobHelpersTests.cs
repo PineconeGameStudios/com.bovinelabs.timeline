@@ -23,7 +23,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Timeline
                 var binding = new TrackBinding { Value = target };
                 var animated = new TestAnimatedFloatComponent { CurrentValue = 42f };
 
-                JobHelpers.AnimateUnblend<float, TestAnimatedFloatComponent>(binding, ref animated, blendData.AsParallelWriter());
+                JobHelpers.AnimateUnblend(binding, ref animated, blendData.AsParallelWriter());
 
                 Assert.IsTrue(blendData.TryGetValue(target, out var mix));
                 Assert.AreEqual(42f, mix.Value1, 0.0001f);
@@ -45,7 +45,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Timeline
                 var binding = new TrackBinding { Value = target };
                 var animated = new TestAnimatedFloatComponent { CurrentValue = 5f };
 
-                JobHelpers.AccumulateWeighted<float, TestAnimatedFloatComponent>(
+                JobHelpers.AccumulateWeighted(
                     binding,
                     ref animated,
                     new ClipWeight { Value = 0.25f },
@@ -80,7 +80,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Timeline
                 };
 
                 var animated = new TestAnimatedFloatComponent { CurrentValue = 9f };
-                JobHelpers.AccumulateWeighted<float, TestAnimatedFloatComponent>(
+                JobHelpers.AccumulateWeighted(
                     binding,
                     ref animated,
                     new ClipWeight { Value = 0.8f },
@@ -117,7 +117,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Timeline
                 };
 
                 var animated = new TestAnimatedFloatComponent { CurrentValue = 6f };
-                JobHelpers.AccumulateWeighted<float, TestAnimatedFloatComponent>(
+                JobHelpers.AccumulateWeighted(
                     binding,
                     ref animated,
                     new ClipWeight { Value = 0.6f },
@@ -154,7 +154,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Timeline
                 };
 
                 var animated = new TestAnimatedFloatComponent { CurrentValue = 4f };
-                JobHelpers.AccumulateWeighted<float, TestAnimatedFloatComponent>(
+                JobHelpers.AccumulateWeighted(
                     binding,
                     ref animated,
                     new ClipWeight { Value = 0.4f },
@@ -191,7 +191,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Timeline
                 };
 
                 var animated = new TestAnimatedFloatComponent { CurrentValue = 2f };
-                JobHelpers.AccumulateWeighted<float, TestAnimatedFloatComponent>(
+                JobHelpers.AccumulateWeighted(
                     binding,
                     ref animated,
                     new ClipWeight { Value = 0.2f },

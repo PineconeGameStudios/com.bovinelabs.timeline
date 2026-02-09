@@ -34,7 +34,7 @@ namespace BovineLabs.Timeline.Tests.TestDoubles
 
         public static OwnedBlobCurveSampler CreateOwned(AnimationCurve curve)
         {
-            var blob = BlobCurve.Create(curve, Allocator.Persistent);
+            var blob = BlobCurve.Create(curve);
             return new OwnedBlobCurveSampler(blob);
         }
 

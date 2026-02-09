@@ -26,7 +26,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
         [Test]
         public void StartedTimeline_ForwardClock_InitializesTimerAtRangeStart()
         {
-            var linkedTimerData = TimelineTestHelpers.CreateTimerDataTarget(this.Manager, default, false);
+            var linkedTimerData = TimelineTestHelpers.CreateTimerDataTarget(this.Manager, default);
             var timerEntity = TimelineTestHelpers.CreateTimerEntity(
                 this.Manager,
                 new Timer { Time = Ticks(123) },
@@ -45,7 +45,6 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
                     Scale = 1.5,
                 },
                 true,
-                false,
                 false);
 
             TimelineTestHelpers.AddTimerDataLink(this.Manager, timerEntity, linkedTimerData);
@@ -68,7 +67,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
         [Test]
         public void StartedTimeline_ReverseClock_InitializesTimerAtRangeEnd()
         {
-            var linkedTimerData = TimelineTestHelpers.CreateTimerDataTarget(this.Manager, default, false);
+            var linkedTimerData = TimelineTestHelpers.CreateTimerDataTarget(this.Manager, default);
             var timerEntity = TimelineTestHelpers.CreateTimerEntity(
                 this.Manager,
                 new Timer { Time = Ticks(123) },
@@ -87,7 +86,6 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
                     Scale = 0.5,
                 },
                 true,
-                false,
                 false);
 
             TimelineTestHelpers.AddTimerDataLink(this.Manager, timerEntity, linkedTimerData);
@@ -120,8 +118,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
                     Scale = 1.0,
                 },
                 true,
-                true,
-                false);
+                true);
 
             this.timerUpdateSystem.Update(this.WorldUnmanaged);
             this.Manager.CompleteAllTrackedJobs();
@@ -149,8 +146,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
                     Scale = 1.0,
                 },
                 true,
-                true,
-                false);
+                true);
 
             this.timerUpdateSystem.Update(this.WorldUnmanaged);
             this.Manager.CompleteAllTrackedJobs();
@@ -321,7 +317,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
         public void CompositeTimers_PropagateTimerDataAndToggleLinkedActives()
         {
             var rootListener = TimelineTestHelpers.CreateTimerDataTarget(this.Manager, default, true);
-            var childListener = TimelineTestHelpers.CreateTimerDataTarget(this.Manager, default, false);
+            var childListener = TimelineTestHelpers.CreateTimerDataTarget(this.Manager, default);
 
             var rootTimer = TimelineTestHelpers.CreateTimerEntity(
                 this.Manager,
@@ -338,8 +334,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
                     Scale = 1.5,
                 },
                 true,
-                true,
-                false);
+                true);
 
             var childComposite = TimelineTestHelpers.CreateCompositeTimerEntity(
                 this.Manager,

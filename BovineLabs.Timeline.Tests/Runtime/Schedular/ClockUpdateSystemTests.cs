@@ -39,8 +39,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
                 {
                     DeltaTime = Ticks(99),
                     Scale = 9.0,
-                },
-                true);
+                });
 
             this.clockUpdateSystem.Update(this.WorldUnmanaged);
             this.Manager.CompleteAllTrackedJobs();
@@ -62,8 +61,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
                     TimeScale = 3f,
                     Reverse = true,
                 },
-                new ClockData(),
-                true);
+                new ClockData());
 
             this.clockUpdateSystem.Update(this.WorldUnmanaged);
             this.Manager.CompleteAllTrackedJobs();
@@ -85,8 +83,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Schedular
                     TimeScale = 7.5f,
                     Reverse = false,
                 },
-                new ClockData(),
-                true);
+                new ClockData());
 
             this.clockUpdateSystem.Update(this.WorldUnmanaged);
             this.Manager.CompleteAllTrackedJobs();

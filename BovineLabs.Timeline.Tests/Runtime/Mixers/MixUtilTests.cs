@@ -6,6 +6,7 @@ namespace BovineLabs.Timeline.Tests.Runtime.Mixers
 {
     using NUnit.Framework;
     using Unity.Mathematics;
+    using UnityEngine.UIElements;
 
     public class MixUtilTests
     {
