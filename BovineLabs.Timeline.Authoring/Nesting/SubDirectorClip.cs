@@ -103,7 +103,7 @@ namespace BovineLabs.Timeline.Authoring
         private class TimeSyncBehaviour : PlayableBehaviour
         {
             /// <summary> The nested PlayableDirector to synchronize time with. </summary>
-            public PlayableDirector? Director;
+            public PlayableDirector Director;
 
             /// <inheritdoc />
             public override void PrepareFrame(Playable playable, FrameData info)

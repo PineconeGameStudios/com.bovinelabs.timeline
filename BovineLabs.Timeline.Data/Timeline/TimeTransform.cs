@@ -81,7 +81,7 @@ namespace BovineLabs.Timeline.Data
         /// <summary>Returns true if the transform is equal to the given object.</summary>
         /// <param name="obj">The object to compare.</param>
         /// <returns>True if the object is an equal transform; otherwise, false.</returns>
-        public override bool Equals(object? obj)
+        public override bool Equals(object obj)
         {
             return obj is TimeTransform transform && this.Equals(transform);
         }

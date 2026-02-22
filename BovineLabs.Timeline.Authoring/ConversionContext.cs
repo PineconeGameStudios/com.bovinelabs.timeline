@@ -31,16 +31,16 @@ namespace BovineLabs.Timeline.Authoring
         public Entity TrackEntity;
 
         /// <summary>The current playable director being converted. For the topmost director, this is the PlayableDirector.</summary>
-        public PlayableDirector? Director;
+        public PlayableDirector Director;
 
         /// <summary>The current track being converted.</summary>
-        public TrackAsset? Track;
+        public TrackAsset Track;
 
         /// <summary>The current clip being converted.</summary>
-        public TimelineClip? Clip;
+        public TimelineClip Clip;
 
         /// <summary>The current binding for the track.</summary>
-        public Binding? Binding;
+        public Binding Binding;
 
         /// <summary>Shared values that should be maintained across context copies during conversion.</summary>
         public SharedContextValues SharedContextValues;
@@ -121,7 +121,7 @@ namespace BovineLabs.Timeline.Authoring
         /// <param name="context">The baking context.</param>
         /// <param name="name">Optional name for the entity.</param>
         /// <returns>The created entity.</returns>
-        public static Entity CreateEntity(this BakingContext context, string? name = null)
+        public static Entity CreateEntity(this BakingContext context, string name = null)
         {
             return context.Baker.CreateAdditionalEntity(TransformUsageFlags.None, false, name);
         }
@@ -211,7 +211,7 @@ namespace BovineLabs.Timeline.Authoring
         /// <param name="track">The DOTS track to bind.</param>
         /// <param name="trackBinding">The Unity object bound to the track (GameObject or Component).</param>
         /// <returns>A binding object associating the track with its target entity.</returns>
-        public static Binding GetBinding(this BakingContext context, DOTSTrack track, Object? trackBinding)
+        public static Binding GetBinding(this BakingContext context, DOTSTrack track, Object trackBinding)
         {
             var entity = Entity.Null;
 

@@ -18,7 +18,7 @@ namespace BovineLabs.Timeline.Authoring
     public class SubTimelineClip : DOTSClip, ITimelineClipAsset
     {
         /// <summary> The timeline asset to embed in this clip. </summary>
-        public TimelineAsset? Timeline;
+        public TimelineAsset Timeline;
 
         /// <summary> Track bindings that map tracks in the timeline to target objects. </summary>
         public TrackKeyBindings TrackBindings;
