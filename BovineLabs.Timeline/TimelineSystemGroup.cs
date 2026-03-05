@@ -4,7 +4,6 @@
 
 namespace BovineLabs.Timeline
 {
-    using BovineLabs.Core.Groups;
     using Unity.Entities;
 
     /// <summary>
@@ -13,7 +12,7 @@ namespace BovineLabs.Timeline
     /// Contains both the Schedule and Timeline update systems.
     /// </summary>
     [WorldSystemFilter(WorldSystemFilterFlags.Default | WorldSystemFilterFlags.Editor, WorldSystemFilterFlags.Default | WorldSystemFilterFlags.Editor)]
-    [UpdateInGroup(typeof(BeforeTransformSystemGroup))]
+    [UpdateInGroup(typeof(Unity.Transforms.TransformSystemGroup), OrderFirst = true)]
     public partial class TimelineSystemGroup : ComponentSystemGroup
     {
     }
