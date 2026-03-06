@@ -93,7 +93,7 @@ namespace BovineLabs.Timeline.Editor
                         TimeScale = 1,
                     });
 
-                    break;
+                    //break;
                 }
             }
         }
