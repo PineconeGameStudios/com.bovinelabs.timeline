@@ -23,14 +23,14 @@ namespace BovineLabs.Timeline.Authoring
         /// <param name="asset">The timeline asset to get tracks from.</param>
         /// <param name="baker">The baker to register dependencies with.</param>
         /// <returns>An enumerable of DOTS tracks.</returns>
-        public static IEnumerable<DOTSTrack> GetDOTSTracks(this TimelineAsset asset, IBaker baker)
+        public static IEnumerable<TrackAsset> GetDOTSTracks(this TimelineAsset asset, IBaker baker)
         {
             if (asset == null)
             {
                 yield break;
             }
 
-            foreach (var track in asset.GetOutputTracks().OfType<DOTSTrack>())
+            foreach (var track in asset.GetOutputTracks().Where(IsSupported))
             {
                 baker.DependsOn(track);
                 if (!track.mutedInHierarchy)
@@ -45,14 +45,19 @@ namespace BovineLabs.Timeline.Authoring
         /// </summary>
         /// <param name="asset">The timeline asset to get tracks from.</param>
         /// <returns>An enumerable of DOTS tracks.</returns>
-        public static IEnumerable<DOTSTrack> GetDOTSTracks(this TimelineAsset asset)
+        public static IEnumerable<TrackAsset> GetDOTSTracks(this TimelineAsset asset)
         {
             if (asset == null)
             {
                 return Enumerable.Empty<DOTSTrack>();
             }
 
-            return asset.GetOutputTracks().OfType<DOTSTrack>();
+            return asset.GetOutputTracks().Where(IsSupported);
+        }
+
+        public static bool IsSupported(this TrackAsset asset)
+        {
+            return asset is DOTSTrack || BakerTypeManager.TryGetBaker(asset.GetType(), out _);
         }
 
         /// <summary>

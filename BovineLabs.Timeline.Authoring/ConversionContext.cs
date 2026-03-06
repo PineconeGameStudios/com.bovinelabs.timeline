@@ -71,7 +71,7 @@ namespace BovineLabs.Timeline.Authoring
     public class Binding
     {
         /// <summary> The DOTS track being bound. </summary>
-        public readonly DOTSTrack Track;
+        public readonly TrackAsset Track;
 
         /// <summary> The target entity this track is bound to. </summary>
         public readonly Entity Target;
@@ -81,7 +81,7 @@ namespace BovineLabs.Timeline.Authoring
         /// </summary>
         /// <param name="track">The DOTS track being bound.</param>
         /// <param name="target">The target entity for the binding.</param>
-        public Binding(DOTSTrack track, Entity target)
+        public Binding(TrackAsset track, Entity target)
         {
             this.Track = track;
             this.Target = target;
@@ -211,7 +211,7 @@ namespace BovineLabs.Timeline.Authoring
         /// <param name="track">The DOTS track to bind.</param>
         /// <param name="trackBinding">The Unity object bound to the track (GameObject or Component).</param>
         /// <returns>A binding object associating the track with its target entity.</returns>
-        public static Binding GetBinding(this BakingContext context, DOTSTrack track, Object trackBinding)
+        public static Binding GetBinding(this BakingContext context, TrackAsset track, Object trackBinding)
         {
             var entity = Entity.Null;
 

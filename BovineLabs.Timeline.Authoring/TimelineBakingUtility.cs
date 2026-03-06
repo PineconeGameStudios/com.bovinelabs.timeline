@@ -6,6 +6,7 @@ namespace BovineLabs.Timeline.Authoring
 {
     using BovineLabs.Timeline.Data;
     using UnityEditor;
+    using UnityEngine.Timeline;
 
     /// <summary>
     /// Utility methods for timeline baking operations.
@@ -17,7 +18,7 @@ namespace BovineLabs.Timeline.Authoring
         /// </summary>
         /// <param name="dotsTrack">The track to get an identifier for.</param>
         /// <returns>A unique identifier for the track.</returns>
-        public static TrackId TrackToIdentifier(DOTSTrack dotsTrack)
+        public static TrackId TrackToIdentifier(TrackAsset dotsTrack)
         {
             var goid = GlobalObjectId.GetGlobalObjectIdSlow(dotsTrack);
 

@@ -85,5 +85,13 @@ namespace BovineLabs.Timeline.Authoring
         protected virtual void Bake(BakingContext context)
         {
         }
+
+        class DOTSTrackBaker : TimelineTrackBaker<DOTSTrack>
+        {
+            public override void BakeTrack(DOTSTrack track, BakingContext context, ActiveRange range)
+            {
+                track.BakeTrack(context, range);
+            }
+        }
     }
 }

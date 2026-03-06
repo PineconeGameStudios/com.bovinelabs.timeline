@@ -152,19 +152,20 @@ namespace BovineLabs.Timeline.Authoring
         /// <exception cref="ArgumentException">Thrown when context.Track is not a valid DOTS track.</exception>
         public static void ConvertTrack(BakingContext context, ActiveRange range)
         {
-            var track = context.Track as DOTSTrack;
-            if (track == null)
+            if (!BakerTypeManager.TryGetBaker(context.Track.GetType(), out var bakerType))
             {
-                throw new ArgumentException("context.Track must be a valid DOTS track");
+                throw new ArgumentException($"context.Track must be a valid DOTS track, found {context.Track.GetType()}");
             }
 
-            context.Baker.DependsOn(track);
-            foreach (var clip in track.GetClips())
+            var baker = (TimelineTrackBaker)Activator.CreateInstance(bakerType);
+
+            context.Baker.DependsOn(context.Track);
+            foreach (var clip in context.Track.GetClips())
             {
                 context.Baker.DependsOn(clip.asset);
             }
 
-            track.BakeTrack(context, range);
+            baker.BakeTrack(context.Track, context, range);
         }
 
         private static void ConvertTimeline(BakingContext context, TimelineAsset timeline, ActiveRange range)
@@ -194,7 +195,7 @@ namespace BovineLabs.Timeline.Authoring
             context.SharedContextValues.TimeDataEntities.AddRange(cachedTimeDataEntities);
         }
 
-        private static void ConvertTracks(BakingContext context, IEnumerable<DOTSTrack> dotsTracks, ActiveRange range)
+        private static void ConvertTracks(BakingContext context, IEnumerable<TrackAsset> dotsTracks, ActiveRange range)
         {
             foreach (var track in dotsTracks)
             {
