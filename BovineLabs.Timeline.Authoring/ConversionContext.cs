@@ -248,7 +248,7 @@ namespace BovineLabs.Timeline.Authoring
         /// <param name="context">The baking context.</param>
         /// <returns>The created track entity.</returns>
         /// <exception cref="ArgumentException">Thrown when required context values are missing.</exception>
-        internal static Entity CreateTrackEntity(this BakingContext context)
+        public static Entity CreateTrackEntity(this BakingContext context)
         {
             if (context.Track == null || context.Timer == Entity.Null || context.Binding == null)
             {
