@@ -50,11 +50,13 @@ namespace BovineLabs.Timeline.Authoring
 
             foreach(var asm in AppDomain.CurrentDomain.GetAssemblies().Where(asm => asm == current || asm.IsAssemblyReferencingAssembly(current)))
             {
-                foreach(var bakerType in asm.GetTypes().Where(type => type != typeof(TimelineTrackBaker) && typeof(TimelineTrackBaker).IsAssignableFrom(type)))
+                foreach(var bakerType in asm.GetTypes().Where(type =>
+                    type != typeof(TimelineTrackBaker)
+                    && type != typeof(TimelineTrackBaker<>)
+                    && typeof(TimelineTrackBaker).IsAssignableFrom(type)))
                 {
                     var bakedType = bakerType.BaseType.GenericTypeArguments[0];
                     bakerToBaked[bakerType] = bakedType;
-                    break;
                 }
             }
 

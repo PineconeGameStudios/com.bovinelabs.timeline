@@ -49,7 +49,7 @@ namespace BovineLabs.Timeline.Authoring
         {
             if (asset == null)
             {
-                return Enumerable.Empty<DOTSTrack>();
+                return Enumerable.Empty<TrackAsset>();
             }
 
             return asset.GetOutputTracks().Where(IsSupported);
@@ -57,7 +57,7 @@ namespace BovineLabs.Timeline.Authoring
 
         public static bool IsSupported(this TrackAsset asset)
         {
-            return asset is DOTSTrack || BakerTypeManager.TryGetBaker(asset.GetType(), out _);
+            return BakerTypeManager.TryGetBaker(asset.GetType(), out _);
         }
 
         /// <summary>
